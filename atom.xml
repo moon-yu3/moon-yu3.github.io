@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-14T12:23:16.345Z</updated>
+  <updated>2020-02-24T08:25:45.958Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,40 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>2020新春战役GYCTF writeup</title>
+    <link href="http://yoursite.com/2020/02/24/gyctf2020-writeup/"/>
+    <id>http://yoursite.com/2020/02/24/gyctf2020-writeup/</id>
+    <published>2020-02-24T10:49:00.000Z</published>
+    <updated>2020-02-24T08:25:45.958Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="web" scheme="http://yoursite.com/categories/web/"/>
+    
+    
+      <category term="web" scheme="http://yoursite.com/tags/web/"/>
+    
+      <category term="writeup" scheme="http://yoursite.com/tags/writeup/"/>
+    
+  </entry>
+  
+  <entry>
     <title>sqlite</title>
     <link href="http://yoursite.com/2020/02/14/sqlite/"/>
     <id>http://yoursite.com/2020/02/14/sqlite/</id>
     <published>2020-02-14T10:49:00.000Z</published>
-    <updated>2020-02-14T12:23:16.345Z</updated>
+    <updated>2020-02-24T08:14:43.934Z</updated>
     
     <summary type="html">
     
