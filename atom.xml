@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-13T03:03:29.285Z</updated>
+  <updated>2020-04-13T03:04:20.953Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://yoursite.com/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/"/>
     <id>http://yoursite.com/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/</id>
     <published>2020-04-12T14:30:00.000Z</published>
-    <updated>2020-04-13T03:03:29.285Z</updated>
+    <updated>2020-04-13T03:04:20.953Z</updated>
     
     <summary type="html">
     
@@ -40,6 +40,8 @@
     
     
       <category term="web" scheme="http://yoursite.com/tags/web/"/>
+    
+      <category term="writeup" scheme="http://yoursite.com/tags/writeup/"/>
     
       <category term="xss" scheme="http://yoursite.com/tags/xss/"/>
     
