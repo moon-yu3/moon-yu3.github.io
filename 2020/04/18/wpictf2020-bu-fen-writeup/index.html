@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Hello World, M0on&#39;s Blog">
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex">
+    <meta name="keywords" content="WPICTF-2020-部分writeup, M0on&#39;s Blog">
+    <meta name="description" content="虎符前一天看一下">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hello World | M0on&#39;s Blog</title>
+    <title>WPICTF-2020-部分writeup | M0on&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -219,12 +219,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/30.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Hello World</h1>
+                    <h1 class="description center-align post-title">WPICTF-2020-部分writeup</h1>
                 </div>
             </div>
         </div>
@@ -339,12 +339,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/web/">
+                                <span class="chip bg-color">web</span>
+                            </a>
+                        
+                            <a href="/tags/writeup/">
+                                <span class="chip bg-color">writeup</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/web/" class="post-category">
+                                web
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -353,7 +370,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-10
+                    2020-04-18
                 </div>
                 
 
@@ -362,14 +379,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    683
+                    169
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    1 分
                 </div>
                 
 
@@ -385,46 +402,27 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><pre class=" language-bash"><code class="language-bash">$ hexo new <span class="token string">"My New Post"</span></code></pre>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><pre class=" language-bash"><code class="language-bash">$ hexo server</code></pre>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><pre class=" language-bash"><code class="language-bash">$ hexo generate</code></pre>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><pre class=" language-bash"><code class="language-bash">$ hexo deploy</code></pre>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<p>##写文章</p>
-<pre><code>---
-title: typora-vue-theme主题介绍
-date: 2018-09-07 09:25:00
-author: 赵奇
-img: /source/images/xxx.jpg
-top: true
-cover: true
-coverImg: /images/1.jpg
-password: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92
-toc: false
-mathjax: false
-summary: 这是你自定义的文章摘要内容，如果这个属性有值，文章卡片摘要就显示这段文字，否则程序会自动截取文章的部分内容作为摘要
-categories: Markdown
-tags:
-  - Typora
-  - Markdown
----
-</code></pre><pre class=" language-$xslt"><code class="language-$xslt">title    Markdown 的文件标题    文章标题，强烈建议填写此选项
-date    文件创建时的日期时间    发布时间，强烈建议填写此选项，且最好保证全局唯一
-author    根 _config.yml 中的 author    文章作者
-img    featureImages 中的某个值    文章特征图，推荐使用图床(腾讯云、七牛云、又拍云等)来做图片的路径.如: http://xxx.com/xxx.jpg
-top    true    推荐文章（文章是否置顶），如果 top 值为 true，则会作为首页推荐文章
-cover    false    v1.0.2版本新增，表示该文章是否需要加入到首页轮播封面中
-coverImg    无    v1.0.2版本新增，表示该文章在首页轮播封面需**要显示的图片路径，如果没有，则默认使用文章的特色图片
-password    无    文章阅读密码，如果要对文章设置阅读验证密码的话，就可以设置 password 的值，该值必须是用 SHA256 加密后的密码，防止被他人识破。前提是在主题的 config.yml 中激活了 verifyPassword 选项
-toc    true    是否开启 TOC，可以针对某篇文章单独关闭 TOC 的功能。前提是在主题的 config.yml 中激活了 toc 选项
-mathjax    false    是否开启数学公式支持 ，本文章是否开启 mathjax，且需要在主题的 _config.yml 文件中也需要开启才行
-summary    无    文章摘要，自定义的文章摘要内容，如果这个属性有值，文章卡片摘要就显示这段文字，否则程序会自动截取文章的部分内容作为摘要
-categories    无    文章分类，本主题的分类表示宏观上大的分类，只建议一篇文章一个分类
-tags    无    文章标签，一篇文章可以多个标签</code></pre>
+                <p>前几题还是简单的</p>
+<h2 id="👉👉👉第一题😎👉"><a href="#👉👉👉第一题😎👉" class="headerlink" title="👉👉👉第一题😎👉"></a>👉👉👉第一题😎👉</h2><p><img src="../../../../../../../images/WPICTF2020/123.png" alt=""></p>
+<h2 id="第二题-dorsia2"><a href="#第二题-dorsia2" class="headerlink" title="第二题 dorsia2"></a>第二题 dorsia2</h2><p>描述</p>
+<pre><code>http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm The second card.
+
+http://dorsia2.wpictf.xyz:31337/index.html or 31338 or 31339
+
+Firefox doesnt like the page... try chromium.
+
+made by: awg
+
+Hint: flag in ~/flag.txt</code></pre><p>虽然这题很简单，不过给代码的方式很有趣</p>
+<p><img src="../../../../../../../images/WPICTF2020/code-dorsia2.png" alt=""></p>
+<p><img src="../../../../../../../images/WPICTF2020/dorsia2-etc-passwd.png" alt=""></p>
+<p>最后</p>
+<p><img src="../../../../../../../images/WPICTF2020/dorsia2.png" alt=""></p>
+<h2 id="第三题"><a href="#第三题" class="headerlink" title="第三题"></a>第三题</h2><p>是一个 c的编译器</p>
+<p>通过报错包含得到</p>
+<p><img src="../../../../../../../images/WPICTF2020/autograder.png" alt=""></p>
+<h2 id="Suckmore-Shell2-0-linux"><a href="#Suckmore-Shell2-0-linux" class="headerlink" title="Suckmore Shell2.0 (linux)"></a>Suckmore Shell2.0 (linux)</h2><p>linux 的题目，看到一个很多人做的去混一下</p>
+<p><img src="../../../../../../../images/WPICTF2020/Suckmore-Shell-2.0.png" alt=""></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -468,7 +466,7 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://mo0n.top/2020/02/10/hello-world/">http://mo0n.top/2020/02/10/hello-world/</a>
+                    <a href="http://mo0n.top/2020/04/18/wpictf2020-bu-fen-writeup/">http://mo0n.top/2020/04/18/wpictf2020-bu-fen-writeup/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -505,7 +503,15 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/web/">
+                                    <span class="chip bg-color">web</span>
+                                </a>
+                            
+                                <a href="/tags/writeup/">
+                                    <span class="chip bg-color">writeup</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -548,24 +554,24 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/02/14/sqlite/">
+                <a href="/2020/04/19/hfctf2020-bu-fen-writeup/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="sqlite">
+                        <img src="/medias/featureimages/31.jpg" class="responsive-img" alt="hfctf2020部分writeup">
                         
-                        <span class="card-title">sqlite</span>
+                        <span class="card-title">hfctf2020部分writeup</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            不忘初心
+                            太菜了
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-14
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-19
                         </span>
                         <span class="publish-author">
                             
@@ -586,8 +592,8 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
                         <span class="chip bg-color">web</span>
                     </a>
                     
-                    <a href="/tags/sql/">
-                        <span class="chip bg-color">sql</span>
+                    <a href="/tags/writeup/">
+                        <span class="chip bg-color">writeup</span>
                     </a>
                     
                 </div>
@@ -598,37 +604,56 @@ tags    无    文章标签，一篇文章可以多个标签</code></pre>
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/02/10/hello-world/">
+                <a href="/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="Hello World">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="ByteBandits CTF 2020部分writeup-notesapp">
                         
-                        <span class="card-title">Hello World</span>
+                        <span class="card-title">ByteBandits CTF 2020部分writeup-notesapp</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
+                            Byte-Bandits-CTF2020 部分writeup-notesapp
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-10
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-12
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            m0on
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/web/" class="post-category">
+                                    web
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/web/">
+                        <span class="chip bg-color">web</span>
+                    </a>
+                    
+                    <a href="/tags/writeup/">
+                        <span class="chip bg-color">writeup</span>
+                    </a>
+                    
+                    <a href="/tags/xss/">
+                        <span class="chip bg-color">xss</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
